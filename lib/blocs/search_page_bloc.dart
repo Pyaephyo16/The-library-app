@@ -4,13 +4,13 @@ import 'package:the_library_app/dummy/dummy_data.dart';
 
 class SearchPageBloc extends ChangeNotifier{
 
-List<BookVO> filterList = [];
+List<BookTestVO> filterList = [];
 
 
-  searchFun(String str){
+  Future<String> searchFun(String str){
     print("String =====================> $str");
      if(str!=null){
-    List<BookVO> temp = [];
+    List<BookTestVO> temp = [];
             temp = bookDummy.where((element){
              return element.title.toString().toLowerCase().contains(str.toLowerCase());
               }).toList();
@@ -18,6 +18,7 @@ List<BookVO> filterList = [];
               print("filter list =============> ${filterList}");
              }
              notifyListeners();
+             return Future.value("sth");
   }
 
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_library_app/resources/colors.dart';
 import 'package:the_library_app/resources/constants.dart';
 import 'package:the_library_app/resources/dimens.dart';
 
@@ -41,8 +42,9 @@ class BookNameAndInfoView extends StatelessWidget {
          children: [
            Text(title,
            style: TextStyle(
-             fontSize: (isInShelf == true) ? TEXT_MEDIUM_2: TEXT_REGULAR,
-             fontWeight: FontWeight.w600,
+             fontSize: (isInShelf == true) ? TEXT_MEDIUM_2: TEXT_MEDIUM,
+             fontWeight: FontWeight.w400,
+             color: BTM_SHEET_OPTION_TEXT_COLOR,
            ),
            ),
         Expanded(

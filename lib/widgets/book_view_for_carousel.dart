@@ -10,10 +10,12 @@ class BookViewForCarousel extends StatelessWidget {
 
   final String image;
   final bool isSample;
+  final Function menuFun;
 
   BookViewForCarousel({
     required this.image,
     required this.isSample,
+    required this.menuFun,
     });
 
   @override
@@ -38,23 +40,7 @@ class BookViewForCarousel extends StatelessWidget {
           alignment: Alignment.topLeft,
           child: Visibility(
             visible: isSample,
-            child: Container(
-               margin: EdgeInsets.all(MARGIN_SMALL_1X),
-                width: BOOK_SAMPLE_VIEW_CONTAINER_WIDTH,
-                height: BOOK_SAMPLE_VIEW_CONTAINER_HEIGHT,
-                decoration: BoxDecoration(
-                  color: SAMPLE_BACKGROUND_COLOR,
-                  borderRadius: BorderRadius.circular(MARGIN_SMALL),
-                ),
-                child: Center(
-                  child: Text(BOOK_SAMPLE_TEXT,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: TEXT_SMALL,
-                    ),
-                  ),
-                ),
-            ),
+            child: SampleTextView(),
           ),
         ),
 
@@ -62,7 +48,9 @@ class BookViewForCarousel extends StatelessWidget {
           alignment: Alignment.topRight,
           child: EllipisIconView(
             color: Colors.white,
-            tabBookInfoBtn: () => print("todo"),
+            tabBookInfoBtn: (){
+              menuFun();
+            },
           ),
         ),
 
@@ -73,9 +61,38 @@ class BookViewForCarousel extends StatelessWidget {
 
         Align(
           alignment: Alignment.bottomRight,
-          child: CheckIconView(),
+          child: CheckIconView(
+            isInShelvesIcon: false,
+          ),
         ),
       ],
+    );
+  }
+}
+
+class SampleTextView extends StatelessWidget {
+  const SampleTextView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+       margin: EdgeInsets.all(MARGIN_SMALL_1X),
+        width: BOOK_SAMPLE_VIEW_CONTAINER_WIDTH,
+        height: BOOK_SAMPLE_VIEW_CONTAINER_HEIGHT,
+        decoration: BoxDecoration(
+          color: BOOK_ICON_COLOR,
+          borderRadius: BorderRadius.circular(MARGIN_SMALL),
+        ),
+        child: Center(
+          child: Text(BOOK_SAMPLE_TEXT,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: TEXT_SMALL,
+            ),
+          ),
+        ),
     );
   }
 }
@@ -94,10 +111,11 @@ class HeadsetIconView extends StatelessWidget {
       height: BOOK_DATA_VIEW_CONTAINER_HEIGHT,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(MARGIN_SMALL),
-      color: SAMPLE_BACKGROUND_COLOR,
+      color: BOOK_ICON_COLOR,
       ),
       child: IconButton(
-      onPressed: (){},
+      onPressed: (){
+      },
        icon: FaIcon(FontAwesomeIcons.headset),iconSize: MARGIN_MEDIUM_2X,color: Colors.white,),
     );
   }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:the_library_app/resources/colors.dart';
 import 'package:the_library_app/resources/dimens.dart';
 
 class EllipisIconView extends StatelessWidget {
@@ -18,6 +19,6 @@ class EllipisIconView extends StatelessWidget {
       onPressed: (){
         tabBookInfoBtn();
       },
-       icon: FaIcon(FontAwesomeIcons.ellipsis),iconSize: MARGIN_MEDIUM_3X,color: color);
+       icon: FaIcon(FontAwesomeIcons.ellipsis,color: color,),iconSize: MARGIN_MEDIUM_3X);
   }
 }

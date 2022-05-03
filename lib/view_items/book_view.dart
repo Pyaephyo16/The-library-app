@@ -1,11 +1,14 @@
 
 import 'package:flutter/material.dart';
+import 'package:the_library_app/resources/colors.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/view_items/check_icon_view.dart';
 
 class BookView extends StatelessWidget {
 
   final String name;
+  final String price;
+  final String image;
   final double bookWidth;
   final double bookHeight;
   final double SizeOfName;
@@ -14,6 +17,8 @@ class BookView extends StatelessWidget {
 
   BookView({
     required this.name,
+    required this.price,
+    required this.image,
     required this.bookWidth,
     required this.bookHeight,
     required this.SizeOfName,
@@ -27,32 +32,43 @@ class BookView extends StatelessWidget {
       onTap: (){
         onClick();
       },
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-             BookCoverImageView(bookWidth: bookWidth, bookHeight: bookHeight,isVisible: isVisible),
-          SizedBox(height: MARGIN_SMALL,),
-           Text(name,
-            overflow: TextOverflow.ellipsis,
-            maxLines: 2,
-            style: TextStyle(
-              color: Colors.black,
-              fontSize: SizeOfName,
-              fontWeight: FontWeight.w600,
-            ),
-           ),
-           Visibility(
-             visible: isVisible,
-             child: Text("${5.0}★ \$${3.99}",
-              style: TextStyle(
-                color: Colors.black,
-                fontSize: TEXT_SMALL_1X,
-                fontWeight: FontWeight.w600,
-              ),
-             ),
-           ),
-        ],
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: MARGIN_PRE_SMALL),
+        child: Container(
+          width: bookWidth,
+          height: bookHeight,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+             BookCoverImageView(
+               image: image,
+               bookWidth: bookWidth,
+                bookHeight: bookHeight,
+                isVisible: isVisible,
+                ),
+              SizedBox(height: MARGIN_SMALL,),
+               Text(name,
+                overflow: TextOverflow.ellipsis,
+                maxLines: 2,
+                style: TextStyle(
+                  color: BTM_SHEET_OPTION_TEXT_COLOR,
+                  fontSize: SizeOfName,
+                ),
+               ),
+               Visibility(
+                 visible: isVisible,
+                 child: Text("${5.0}★  \$$price",
+                 maxLines: 2,
+                  style: TextStyle(
+                    color: BTM_SHEET_OPTION_TEXT_COLOR,
+                    fontSize: TEXT_SMALL_1X,
+                  ),
+                 ),
+               ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -61,11 +77,13 @@ class BookView extends StatelessWidget {
 class BookCoverImageView extends StatelessWidget {
   const BookCoverImageView({
     Key? key,
+    required this.image,
     required this.bookWidth,
     required this.bookHeight,
     required this.isVisible,
   }) : super(key: key);
 
+  final String image;
   final double bookWidth;
   final double bookHeight;
   final bool isVisible;
@@ -84,10 +102,10 @@ class BookCoverImageView extends StatelessWidget {
                  height: bookHeight,
                  clipBehavior: Clip.antiAlias,
                  decoration: BoxDecoration(
-                   borderRadius: BorderRadius.all(Radius.circular(MARGIN_SMALL_1X)),
+                   borderRadius: BorderRadius.all(Radius.circular(MARGIN_PRE_SMALL)),
                  ),
-                 margin: EdgeInsets.only(right: MARGIN_SMALL_1X),
-                 child: Image.network("https://s26162.pcdn.co/wp-content/uploads/2020/01/Sin-Eater-by-Megan-Campisi.jpg",
+                 //margin: EdgeInsets.only(right: MARGIN_PRE_SMALL),
+                 child: Image.network(image,
                  fit: BoxFit.cover,),
                       ),
               ),
@@ -96,7 +114,9 @@ class BookCoverImageView extends StatelessWidget {
                 alignment: Alignment.bottomRight,
                 child: Visibility(
                   visible: !isVisible,
-                  child: CheckIconView()),
+                  child: CheckIconView(
+                    isInShelvesIcon: false,
+                  )),
               )
             ],
           ),

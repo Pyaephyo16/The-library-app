@@ -1,17 +1,17 @@
-const double CAROUSEL_HEIGHT = 300.0;
+const double CAROUSEL_HEIGHT = 220.0;
 const double BOOK_DATA_VIEW_CONTAINER_WIDTH = 36.0;
 const double BOOK_DATA_VIEW_CONTAINER_HEIGHT = 36.0;
 const double BOOK_SAMPLE_VIEW_CONTAINER_WIDTH = 60.0;
 const double BOOK_SAMPLE_VIEW_CONTAINER_HEIGHT = 30.0;
 const double PROFILE_CONTAINER_WIDTH = 24.0;
 const double PROFILE_CONTAINER_HEIGHT = 24.0;
-const double HORIZONTAL_LIST_CONTAINER_HEIGHT =380.0;
+const double HORIZONTAL_LIST_CONTAINER_HEIGHT = 400.0;
 const double BOOK_VIEW_CONTAINER_HEIGHT = 340.0;
-const double BOOK_COVER_CONTAINER_WIDTH = 200.0;
-const double BOOK_COVER_CONTAINER_HEIGHT = 240.0;
+const double BOOK_COVER_CONTAINER_WIDTH = 186.0;
+const double BOOK_COVER_CONTAINER_HEIGHT = 260.0;
 const double CAROUSEL_IMAGE_CONTAINER_HEIGHT = 120.0;
-const double BUTTON_HEIGHT = 40.0;
-const double BOOK_INFO_DIVIDER_WIDTH = 2.0;
+const double BUTTON_HEIGHT = 44.0;
+const double BOOK_INFO_DIVIDER_WIDTH = 1.4;
 const double BOOK_INFO_DIVIDER_HEIGHT = 42.0;
 const double YOUR_BOOK_VIEW_GENRE_CONTAINER_HEIGHT = 40.0;
 const double GENRE_ALL_CANCEL_BTN_CONTAINER_WIDTH = 30.0;
@@ -22,9 +22,21 @@ const double BOOK_NAME_AND_INFO_SHEET_CONTAINER_WIDTH = 40.0;
 const double BOOK_NAME_AND_INFO_SHEET_CONTAINER_HEIGHT = 60.0;
 const double CREATE_SHELF_BUTTON_CONTAINER_WIDTH = 140.0;
 const double CREATE_SHELF_BUTTON_CONTAINER_HEIGHT = 60.0;
+const double USER_PROFILE_CMT_CONTAINER_WIDTH = 50;
+const double USER_PROFILE_CMT_CONTAINER_HEIGHT = 50;
+const double YES_NO_BUTTON_WIDTH = 44.0;
+const double YES_NO_BUTTON_HEIGHT = 30.0;
+const double BOOK_SIZE_IN_lIST_GRID_PAGE_CONTAINER_WIDTH = 186.0;
+const double BOOK_SIZE_IN_lIST_GRID_PAGE_CONTAINER_HEIGHT = 260.0;
+const double BOOK_SIZE_IN_lIST_GRID_PAGE_CONTAINER_WIDTH_2 = 100.0;
+const double BOOK_SIZE_IN_lIST_GRID_PAGE_CONTAINER_HEIGHT_2 = 180.0;
+
+const String IMAGE_CONSTANT = "https://cdn.pastemagazine.com/www/system/images/photo_albums/best-book-covers-july-2019/large/bbcjuly19verynice.jpg?1384968217";
 
 const String TAB_EBOOK = "Ebooks";
 const String TAB_AUDIOBOOK = "AudioBooks";
+
+const String EMPTY_TEXT = "Empty";
 
 const String CREATE_NEW_SHELF = "Create new";
 
@@ -51,6 +63,8 @@ const SORT_BY_RECENT = "Sort by Recent";
 const SORT_BY_AUTHOR = "Sort by Author";
 const SORT_BY_TITLE = "Sort by Title";
 
+const HELPFUL_QUESTION_TEXT = "Was this review helpful?";
+
 const LIST_STYLE = "List";
 const GRID_MEDIUM = "Grid Medium";
 const GRID_LARGE = "Grid Large";
@@ -61,6 +75,14 @@ const String DELETE_TEXT = "Delete";
 
 const String RENAME_SHELF_TEXT = "Rename shelf";
 const String DELETE_SHELF_TEXT = "Delete shelf";
+
+const String FREE_SAMPLE_DETAIL_BUTTON_TEXT = "Free sample";
+const String BUY_DETAIL_BUTTON_TEXT = "Buy \$14.99";
+const String SWITCH_TO_AUDIO_DETAIL_TEXT = "audiobook";
+
+const String ABOUT_THIS_EBOOK_TEXT = "About this eBook";
+const String ABOUT_THIS_AUTHOR_TEXT = "About the Author";
+const String SIMILAR_BOOK_TEXT = "Similar Books";
 
 const SHARE_TAB_IN_DETAIL = "Share";
 const GIFT_TAB_IN_DETAIL = "Gift";

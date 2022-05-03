@@ -4,9 +4,12 @@ import 'package:the_library_app/resources/dimens.dart';
 import '../resources/constants.dart';
 
 class CheckIconView extends StatelessWidget {
-  const CheckIconView({
-    Key? key,
-  }) : super(key: key);
+  
+   final bool isInShelvesIcon;
+
+    CheckIconView({
+      required this.isInShelvesIcon,
+    });
 
   @override
   Widget build(BuildContext context) {
@@ -16,9 +19,9 @@ class CheckIconView extends StatelessWidget {
       height: BOOK_DATA_VIEW_CONTAINER_HEIGHT,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(MARGIN_SMALL),
-        color: SAMPLE_BACKGROUND_COLOR,
+        color: (isInShelvesIcon) ?  Colors.transparent : BOOK_ICON_COLOR,
       ),
-      child: Icon(Icons.check,color: Colors.white,),
+      child: Icon(Icons.check,color: (isInShelvesIcon) ? BTM_SHEET_OPTION_ICON_COLOR :Colors.white,),
     );
   }
 }

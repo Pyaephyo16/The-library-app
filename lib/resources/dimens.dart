@@ -10,9 +10,13 @@ const double MARGIN_MEDIUM_2X = 20.0;
 const double MARGIN_SIZE_FOR_ICON = 22.0;
 const double MARGIN_MEDIUM_3 = 24.0;
 const double MARGIN_MEDIUM_3X = 28.0;
+const double BTM_SHEET_ICON_SIZE = 30.0;
 const double MARGIN_MEDIUM_4 = 32.0;
 const double MARGIN_OVER = 66.0;
-const double MARGIN_OVER_EXTRA = 80.0;
+const double MARGIN_OVER_EXTRA = 100.0;
+const double MARGIN_LARGE = 70.0;
+const double MARGIN_FOR_CAROUSEL = 80.0;
+const double MARGIN_OVER_EXTRA_2 = 126.0;
 
 
 const double TEXT_SMALL = 12.0;

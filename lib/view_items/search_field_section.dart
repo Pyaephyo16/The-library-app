@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:the_library_app/resources/colors.dart';
 import 'package:the_library_app/resources/constants.dart';
 import 'package:the_library_app/resources/dimens.dart';
+import 'package:the_library_app/view_items/user_profile_view.dart';
 
 class SearchFieldSection extends StatelessWidget {
   
@@ -10,6 +11,7 @@ class SearchFieldSection extends StatelessWidget {
     final Icon icon;
     final Function(String) typing;
     final TextEditingController searchText;
+    final Function(String) submittedFun;
 
     SearchFieldSection({
       required this.isSearchPage,
@@ -17,12 +19,16 @@ class SearchFieldSection extends StatelessWidget {
       required this.icon,
       required this.typing,
       required this.searchText,
+      required this.submittedFun,
     });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: searchText,
+      onFieldSubmitted: (str){
+          submittedFun(str);
+      },
       enabled: isSearchPage,
       onChanged: (str){
           typing(str);
@@ -46,17 +52,11 @@ class SearchFieldSection extends StatelessWidget {
       ),
       suffixIcon: Visibility(
         visible: !isSearchPage,
-        child: Container(
+        child: UserProfileView(
           width: PROFILE_CONTAINER_WIDTH,
           height: PROFILE_CONTAINER_HEIGHT,
-          clipBehavior: Clip.antiAlias,
-          margin: EdgeInsets.only(right: MARGIN_SMALL),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(MARGIN_SMALL_1X),
-          ),
-          child: Image.network("https://www.rd.com/wp-content/uploads/2017/09/01-shutterstock_476340928-Irina-Bg.jpg",
-            fit: BoxFit.cover,
-          ),
+          isInDetail: false,
+          image: "https://www.rd.com/wp-content/uploads/2017/09/01-shutterstock_476340928-Irina-Bg.jpg",
         ),
       ),
       hintStyle: TextStyle(
@@ -69,3 +69,4 @@ class SearchFieldSection extends StatelessWidget {
        );
   }
 }
+

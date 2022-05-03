@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:the_library_app/data/vos/overview/book_vo.dart';
 import 'package:the_library_app/resources/constants.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/view_items/book_list_title_view.dart';
@@ -7,11 +8,15 @@ import 'package:the_library_app/view_items/book_view.dart';
 class BookListTileAndSerialsView extends StatelessWidget {
 
   final String title;
-  final Function onClick;
+  final List<BookVO> books;
+  final Function(int) onClick;
+  final Function goToNext;
 
   BookListTileAndSerialsView({
     required this.title,
+    required this.books,
     required this.onClick,
+    required this.goToNext,
   });
 
   @override
@@ -23,11 +28,16 @@ class BookListTileAndSerialsView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           BookListTitleView(
+              isListFromHome: false,
               title: title,
-              padd: MARGIN_MEDIUM_2,
+              padd: MARGIN_SMALL,
+              goToNext: (){
+                goToNext();
+              },
           ),
           HorizontalBookListView(
-            onClick: () => onClick(),
+            books: books,
+            onClick: (userSelectBookIndex) => onClick(userSelectBookIndex),
           ),
         ],
       ),
@@ -37,9 +47,11 @@ class BookListTileAndSerialsView extends StatelessWidget {
 
 class HorizontalBookListView extends StatelessWidget {
 
-  final Function onClick;
+  final List<BookVO> books;
+  final Function(int) onClick;
 
   HorizontalBookListView({
+    required this.books,
     required this.onClick,
   });
 
@@ -48,17 +60,19 @@ class HorizontalBookListView extends StatelessWidget {
     return Container(
       height: BOOK_VIEW_CONTAINER_HEIGHT,
       child: ListView.builder(
-        padding: EdgeInsets.only(left: MARGIN_MEDIUM_2,right: MARGIN_MEDIUM_2,top: MARGIN_SMALL_1X),
+        padding: EdgeInsets.only(left: MARGIN_SMALL_1,right: MARGIN_MEDIUM_2,top: MARGIN_SMALL_1X),
         scrollDirection: Axis.horizontal,
-        itemCount: 10,
+        itemCount: books.length,
         itemBuilder: (context,index){
           return BookView(
-            name: BOOK_NAME,
+            name: books[index].title ?? "",
+            price: books[index].price ?? "",
+            image: books[index].bookImage ?? "",
             bookWidth: BOOK_COVER_CONTAINER_WIDTH,
             bookHeight: BOOK_COVER_CONTAINER_HEIGHT,
             SizeOfName: TEXT_SMALL_1X,
             isVisible: true,
-            onClick: ()=> onClick(),
+            onClick: ()=> onClick(index),
           );
         },
       ),

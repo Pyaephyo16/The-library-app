@@ -41,16 +41,20 @@ class HomePage extends StatelessWidget {
               top: 66,
               left: 16,
               right: 16,
-              child: GestureDetector(
-                onTap: (){
-                  navigateToNextScreen(context, SearchPage());
-                },
-                child: SearchFieldSection(
-                  searchText: search,
-                  isSearchPage: false,
-                  prefixTouch: (){},
-                  icon: Icon(Icons.search,size: MARGIN_MEDIUM_3X),
-                  typing: (str){},
+              child: Padding(
+                 padding: EdgeInsets.only(top: MARGIN_MEDIUM_2),
+                child: GestureDetector(
+                  onTap: (){
+                    navigateToNextScreen(context, SearchPage());
+                  },
+                  child: SearchFieldSection(
+                    searchText: search,
+                    isSearchPage: false,
+                    prefixTouch: (){},
+                    icon: Icon(Icons.search,size: MARGIN_MEDIUM_3X),
+                    typing: (str){},
+                    submittedFun: (str){},
+                  ),
                 ),
               ),
               ),
@@ -63,6 +67,7 @@ class HomePage extends StatelessWidget {
                       shouldRebuild: (previous,next) => previous != next,
                       builder: (context,libTabIndex,child) {
         return (libTabIndex == 1) ? FloatingActionButton.extended(
+          backgroundColor: CREATE_BUTTON_COLOR,
           onPressed:(){
             navigateToNextScreen(context, CreateShelfPage());
           },
@@ -75,9 +80,16 @@ class HomePage extends StatelessWidget {
         shouldRebuild: (previous,next) => previous != next,
         builder: (context,currentIndex,child) =>
          BottomNavigationBar(
+           selectedItemColor: CREATE_BUTTON_COLOR,
           items: [
-            BottomNavigationBarItem(icon: Icon(Icons.home),label: NAVIGATION_BAR_HOME_TEXT),
-            BottomNavigationBarItem(icon: Icon(Icons.library_add),label: NAVIGATION_BAR_LIBRARY_TEXT),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.home,size:MARGIN_MEDIUM_4,),
+              label: NAVIGATION_BAR_HOME_TEXT,
+              ),
+            BottomNavigationBarItem(
+              icon: Icon(Icons.library_add,size: MARGIN_MEDIUM_4,),
+              label: NAVIGATION_BAR_LIBRARY_TEXT,
+              ),
           ],
           currentIndex: currentIndex,
           onTap: (index){

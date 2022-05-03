@@ -51,7 +51,7 @@ int? length;
       temp.removeAt(index);
       shelfsName = temp;
       notifyListeners();
-       return Future.value(shelfsName.first.title);
+       return Future.value("");
   }
 
 
