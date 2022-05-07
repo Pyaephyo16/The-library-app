@@ -42,14 +42,26 @@ class BookVOAdapter extends TypeAdapter<BookVO> {
       updatedDate: fields[22] as String?,
       weeksOnList: fields[23] as int?,
       buyLinks: (fields[24] as List?)?.cast<BuyLinkVO>(),
-      time: fields[25] as String?,
+      listName: fields[25] as String?,
+      displayName: fields[26] as String?,
+      bestsellersDate: fields[27] as String?,
+      publishedDate: fields[28] as String?,
+      asterisk: fields[29] as int?,
+      dagger: fields[30] as int?,
+      isbns: (fields[31] as List?)?.cast<IsbnsVO>(),
+      bookDetails: (fields[32] as List?)?.cast<BookDetailsVO>(),
+      reviews: (fields[33] as List?)?.cast<ReviewsVO>(),
+      time: fields[34] as String?,
+      order: fields[35] as int?,
+      numResults: fields[36] as int?,
+      searchResult: fields[37] as SearchResultVO?,
     );
   }
 
   @override
   void write(BinaryWriter writer, BookVO obj) {
     writer
-      ..writeByte(26)
+      ..writeByte(38)
       ..writeByte(0)
       ..write(obj.ageGroup)
       ..writeByte(1)
@@ -101,7 +113,31 @@ class BookVOAdapter extends TypeAdapter<BookVO> {
       ..writeByte(24)
       ..write(obj.buyLinks)
       ..writeByte(25)
-      ..write(obj.time);
+      ..write(obj.listName)
+      ..writeByte(26)
+      ..write(obj.displayName)
+      ..writeByte(27)
+      ..write(obj.bestsellersDate)
+      ..writeByte(28)
+      ..write(obj.publishedDate)
+      ..writeByte(29)
+      ..write(obj.asterisk)
+      ..writeByte(30)
+      ..write(obj.dagger)
+      ..writeByte(31)
+      ..write(obj.isbns)
+      ..writeByte(32)
+      ..write(obj.bookDetails)
+      ..writeByte(33)
+      ..write(obj.reviews)
+      ..writeByte(34)
+      ..write(obj.time)
+      ..writeByte(35)
+      ..write(obj.order)
+      ..writeByte(36)
+      ..write(obj.numResults)
+      ..writeByte(37)
+      ..write(obj.searchResult);
   }
 
   @override
@@ -147,7 +183,28 @@ BookVO _$BookVOFromJson(Map<String, dynamic> json) => BookVO(
       buyLinks: (json['buy_links'] as List<dynamic>?)
           ?.map((e) => BuyLinkVO.fromJson(e as Map<String, dynamic>))
           .toList(),
+      listName: json['list_name'] as String?,
+      displayName: json['display_name'] as String?,
+      bestsellersDate: json['bestsellers_date'] as String?,
+      publishedDate: json['published_date'] as String?,
+      asterisk: json['asterisk'] as int?,
+      dagger: json['dagger'] as int?,
+      isbns: (json['isbns'] as List<dynamic>?)
+          ?.map((e) => IsbnsVO.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      bookDetails: (json['book_details'] as List<dynamic>?)
+          ?.map((e) => BookDetailsVO.fromJson(e as Map<String, dynamic>))
+          .toList(),
+      reviews: (json['reviews'] as List<dynamic>?)
+          ?.map((e) => ReviewsVO.fromJson(e as Map<String, dynamic>))
+          .toList(),
       time: json['time'] as String?,
+      order: json['order'] as int?,
+      numResults: json['numResults'] as int?,
+      searchResult: json['searchResult'] == null
+          ? null
+          : SearchResultVO.fromJson(
+              json['searchResult'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$BookVOToJson(BookVO instance) => <String, dynamic>{
@@ -176,5 +233,17 @@ Map<String, dynamic> _$BookVOToJson(BookVO instance) => <String, dynamic>{
       'updated_date': instance.updatedDate,
       'weeks_on_list': instance.weeksOnList,
       'buy_links': instance.buyLinks,
+      'list_name': instance.listName,
+      'display_name': instance.displayName,
+      'bestsellers_date': instance.bestsellersDate,
+      'published_date': instance.publishedDate,
+      'asterisk': instance.asterisk,
+      'dagger': instance.dagger,
+      'isbns': instance.isbns,
+      'book_details': instance.bookDetails,
+      'reviews': instance.reviews,
       'time': instance.time,
+      'order': instance.order,
+      'numResults': instance.numResults,
+      'searchResult': instance.searchResult,
     };

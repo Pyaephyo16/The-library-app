@@ -3,10 +3,13 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/crate_shelf_page_bloc.dart';
 import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/blocs/shelf_bloc.dart';
+import 'package:the_library_app/blocs/your_books_bloc.dart';
 import 'package:the_library_app/data/vos/overview/book_list_vo.dart';
 import 'package:the_library_app/data/vos/overview/book_vo.dart';
 import 'package:the_library_app/data/vos/show_more/show_more_result_vo.dart';
 import 'package:the_library_app/dummy/dummy_data.dart';
+import 'package:the_library_app/pages/Views/your_books_view.dart';
 import 'package:the_library_app/pages/book_detail_page.dart';
 import 'package:the_library_app/pages/book_list_in_grid.dart';
 import 'package:the_library_app/pages/create_shelf_page.dart';
@@ -16,6 +19,7 @@ import 'package:the_library_app/resources/colors.dart';
 import 'package:the_library_app/resources/constants.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/view_items/book_name_and_info_view.dart';
+import 'package:the_library_app/view_items/divide_line_view.dart';
 import 'package:the_library_app/view_items/option_button_view.dart';
 import 'package:the_library_app/view_items/shelf_text_view.dart';
 import 'package:the_library_app/widgets/shelf_creation_section.dart';
@@ -41,7 +45,7 @@ class ShelfPage extends StatelessWidget {
             builder: (context,shelfName,child) =>
              ShelfDetailAppBarView(
               renameOrDelShelf: (index){
-                CreateShelfPageBloc _bloc = Provider.of(context,listen: false);
+                ShelfBloc _bloc = Provider.of(context,listen: false);
                 _bloc.optionsForShelf(index);
               },
               deleteShelf: (){
@@ -49,7 +53,7 @@ class ShelfPage extends StatelessWidget {
                   context,
                    shelfName,
                   delete: (){
-                    CreateShelfPageBloc bloc = Provider.of(context,listen: false);
+                    ShelfBloc bloc = Provider.of(context,listen: false);
                     bloc.deleteShelf(index).then((value){
                       Navigator.pop(context);
                       Navigator.pop(context);
@@ -70,7 +74,7 @@ class ShelfPage extends StatelessWidget {
             selector: (context,bloc) => bloc.shelfsName,
             shouldRebuild: (previous,next) => previous != next,
             builder: (context,shelfName,child) =>
-             Selector<CreateShelfPageBloc,int?>(
+             Selector<ShelfBloc,int?>(
               selector: (context,bloc) => bloc.shelfOptionValue,
               shouldRebuild: (previous,next) => previous != next,
               builder: (context,shelfOptionValue,child) { 
@@ -87,7 +91,7 @@ class ShelfPage extends StatelessWidget {
                 CreateButton(
                   createBtn:  (){
                           if(formKey.currentState!.validate()){
-            CreateShelfPageBloc bloc = Provider.of(context,listen: false);
+            ShelfBloc bloc = Provider.of(context,listen: false);
                           bloc.renameShelfName(index, newName.text);
                     }
                      },
@@ -105,7 +109,9 @@ class ShelfPage extends StatelessWidget {
                  Padding(
                         padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
                      child: BookNameAndInfoView(
+                       onClick: (){},
                     isSheet: false,
+                    image: "",
                     title: shelfName[index].title ?? "",
                     content: "${shelfName.length} books",
                     isInShelf: true,
@@ -117,19 +123,21 @@ class ShelfPage extends StatelessWidget {
           Divider(color: BTM_SHEET_OPTION_ICON_COLOR,thickness: 1,),
           SizedBox(height: MARGIN_SMALL_1X,),
           Container(
-            child: Selector<HomePageBloc,int>(
+            child: Selector<YourBooksBloc,int>(
                             selector: (context,bloc) => bloc.gpValue,
                             shouldRebuild: (previous,next) => previous != next,
                             builder: (context,gpValue,child) =>
-                            Selector<HomePageBloc,List<ChipVO>>(
+                            Selector<YourBooksBloc,List<ChipVO>>(
                             selector: (context,bloc) => bloc.chips,
                             shouldRebuild: (previous,next) => previous != next,
                             builder: (context,chips,child) =>
-                              Selector<HomePageBloc,int>(
+                              Selector<YourBooksBloc,int>(
                             selector: (context,bloc) => bloc.sortStyle,
                             shouldRebuild: (previous,next) => previous != next,
                             builder: (context,sortStyle,child) =>
                                   YourBooksView(
+                                    listForCarousel: [],
+                                    sheetFun: (index,book){},
                                    chips: chips,
                                  gpValue: gpValue,
                                  sortStyle: sortStyle,
@@ -142,15 +150,15 @@ class ShelfPage extends StatelessWidget {
                                       rd2Text: BTM_RD_2,
                                       rd3Text: BTM_RD_3,
                                       rd1: (val){
-                                        HomePageBloc _bloc = Provider.of(context,listen: false);
+                                        YourBooksBloc _bloc = Provider.of(context,listen: false);
                                              _bloc.chooseSort(val).then((value) => Navigator.pop(context));
                                       },
                                       rd2: (val){
-                                         HomePageBloc _bloc = Provider.of(context,listen: false);
+                                         YourBooksBloc _bloc = Provider.of(context,listen: false);
                                                 _bloc.chooseSort(val).then((value) => Navigator.pop(context));
                                       },
                                       rd3: (val){
-                                         HomePageBloc _bloc = Provider.of(context,listen: false);
+                                         YourBooksBloc _bloc = Provider.of(context,listen: false);
                                                _bloc.chooseSort(val).then((value) => Navigator.pop(context));
                                       }
                                        );
@@ -164,36 +172,32 @@ class ShelfPage extends StatelessWidget {
                                             rd2Text: BTM_RD_SORT_2,
                                              rd3Text: BTM_RD_SORT_3,
                                               rd1: (val){
-                                        HomePageBloc _bloc = Provider.of(context,listen: false);
+                                        YourBooksBloc _bloc = Provider.of(context,listen: false);
                                              _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
                                               },
                                                rd2: (val){
-                                        HomePageBloc _bloc = Provider.of(context,listen: false);
+                                        YourBooksBloc _bloc = Provider.of(context,listen: false);
                                              _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
                                                },
                                                 rd3: (val){
-                                        HomePageBloc _bloc = Provider.of(context,listen: false);
+                                        YourBooksBloc _bloc = Provider.of(context,listen: false);
                                              _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
                                                 }
                                                 );
                                   },
                                   TapGenre: (index){
-                                    HomePageBloc _bloc = Provider.of(context,listen: false);
+                                    YourBooksBloc _bloc = Provider.of(context,listen: false);
                                     _bloc.TapFunction(index);
                                   },
                                   cancelGenre: (){
-                                     HomePageBloc _bloc = Provider.of(context,listen: false);
+                                     YourBooksBloc _bloc = Provider.of(context,listen: false);
                                     _bloc.TapFunction(null);
                                   },
-                                  tabBookInfoBtn: (index){
+                                  tabBookInfoBtn: (index,book){
                            BookOptionBtmSheet(context,index);
                                   },
-                                  onClick: (){
-                                    navigateToNextScreen(context, BookDetailPage(
-                                      userSelectBook: BookVO.empty(),
-                                      userSelectBookFromShowMore: ShowMoreResultVO.empty(),
-                                      isOverView: false,
-                                      ));
+                                  onClick: (index){
+                                    navigateToNextScreen(context, BookDetailPage());
                                   },
                                   ),
                                ),
@@ -261,7 +265,9 @@ class ShelfPage extends StatelessWidget {
                                        Padding(
                                          padding: const EdgeInsets.symmetric(vertical: MARGIN_PRE_SMALL,horizontal: MARGIN_MEDIUM_2),
                                          child: BookNameAndInfoView(
+                                           onClick: (){},
                                            isSheet: true,
+                                           image: "",
                                            title: bookDummy[index].title ?? "",
                                            content: bookDummy[index].content ?? "",
                                            isInShelf: false,

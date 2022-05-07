@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:the_library_app/resources/colors.dart';
@@ -33,6 +34,13 @@ class BookViewForCarousel extends StatelessWidget {
             child: Image.network(image,
             fit: BoxFit.cover,
             ),
+        //    child: CachedNetworkImage(
+        // imageUrl: image,
+        // fit: BoxFit.cover,
+        // progressIndicatorBuilder: (context, url, downloadProgress) => 
+        //         Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+        // errorWidget: (context, url, error) => Image.asset("./asset/image/no_book.png",fit: BoxFit.cover,),
+        //          ),
           )
         ),
 

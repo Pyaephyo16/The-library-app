@@ -6,7 +6,6 @@ class CreateShelfPageBloc extends ChangeNotifier{
 
 
 List<ShelfVO> shelfsName = shelfs;
-int? shelfOptionValue;
 int? length;
 
   Future<String> newShelf(String name){
@@ -22,37 +21,37 @@ int? length;
   }
 
 
-  optionsForShelf(int? index){
-    if(index != null){
-        shelfOptionValue = index;
-        notifyListeners();
-    }
-  }
+  // optionsForShelf(int? index){
+  //   if(index != null){
+  //       shelfOptionValue = index;
+  //       notifyListeners();
+  //   }
+  // }
 
- Future<String> renameShelfName(int index,String newName){
+//  Future<String> renameShelfName(int index,String newName){
 
-    List<ShelfVO> data = shelfsName.mapIndexed((int i,shelf){
-          if(i == index){
-            shelf.title = newName;
-          }
-          return shelf;
-    }).toList();
-    shelfsName = data;
-      shelfOptionValue = null;
-      notifyListeners();
-      return Future.value(shelfsName[index].title);
-  }
+//     List<ShelfVO> data = shelfsName.mapIndexed((int i,shelf){
+//           if(i == index){
+//             shelf.title = newName;
+//           }
+//           return shelf;
+//     }).toList();
+//     shelfsName = data;
+//       shelfOptionValue = null;
+//       notifyListeners();
+//       return Future.value(shelfsName[index].title);
+//   }
 
-  Future<String> deleteShelf(int index){
-      List<ShelfVO> temp = [];
-      shelfsName.forEach((element) {
-        temp.add(element);
-      });
-      temp.removeAt(index);
-      shelfsName = temp;
-      notifyListeners();
-       return Future.value("");
-  }
+  // Future<String> deleteShelf(int index){
+  //     List<ShelfVO> temp = [];
+  //     shelfsName.forEach((element) {
+  //       temp.add(element);
+  //     });
+  //     temp.removeAt(index);
+  //     shelfsName = temp;
+  //     notifyListeners();
+  //      return Future.value("");
+  // }
 
 
 

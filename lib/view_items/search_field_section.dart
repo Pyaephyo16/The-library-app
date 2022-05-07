@@ -42,7 +42,7 @@ class SearchFieldSection extends StatelessWidget {
       filled: true,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.all(Radius.circular(MARGIN_SMALL_1X)),
-        borderSide: BorderSide(color: Colors.transparent),
+        borderSide: BorderSide(color: Colors.black,width: 2),
       ),
       prefixIcon: IconButton(
         onPressed: (){

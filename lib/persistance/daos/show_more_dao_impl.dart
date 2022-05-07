@@ -1,4 +1,5 @@
 import 'package:hive/hive.dart';
+import 'package:the_library_app/data/vos/overview/show_more_list_for_hive_vo.dart';
 import 'package:the_library_app/data/vos/show_more/show_more_result_vo.dart';
 import 'package:the_library_app/persistance/abstraction_layer/show_more_dao.dart';
 import 'package:the_library_app/persistance/hive_constants.dart';
@@ -15,18 +16,13 @@ class ShowMoreDaoImpl extends ShowMoreDao{
 
   
   @override
-  void saveAllShowMoreBooks(List<ShowMoreResultVO> showMoreBooks)async {
-    Map<int,ShowMoreResultVO> mapData = Map.fromIterable(
-        showMoreBooks,
-        key: (book) => book.rank,
-        value: (book) => book,
-    );
-  await getShowMoreBox().putAll(mapData);
+  void saveAllShowMoreBooks(String date,ShowMoreListForHiveVO showMoreBooks)async {
+    await getShowMoreBox().put(date,showMoreBooks);
   }
 
   @override
-  List<ShowMoreResultVO> getAllShowMoreBooks() {
-    return getShowMoreBox().values.toList();
+  ShowMoreListForHiveVO? getAllShowMoreBooks(String date) {
+    return getShowMoreBox().get(date);
   }
 
   ///Reactive
@@ -37,22 +33,21 @@ class ShowMoreDaoImpl extends ShowMoreDao{
   }
 
   @override
-  Stream<List<ShowMoreResultVO>> getAllShowMoreBooksStream() {
-    return Stream.value(getAllShowMoreBooks());
+  Stream<ShowMoreListForHiveVO?> getAllShowMoreBooksStream(String date) {
+    return Stream.value(getAllShowMoreBooks(date));
   }
 
     @override
-  List<ShowMoreResultVO> getAllShowMoreBooksData() {
-    if(getAllShowMoreBooks() != null && getAllShowMoreBooks().isNotEmpty){
-       print("Show More  output from database ==============> ${getAllShowMoreBooks()}");
-        return getAllShowMoreBooks();
+  ShowMoreListForHiveVO? getAllShowMoreBooksData(String date) {
+    if(getAllShowMoreBooks(date) != null){
+      return getAllShowMoreBooks(date);
     }else{
-      return [];
+      return ShowMoreListForHiveVO.empty();
     }
   }
 
-  Box<ShowMoreResultVO> getShowMoreBox(){
-    return Hive.box<ShowMoreResultVO>(BOX_NAME_SHOW_MORE_RESULT_VO);
+  Box<ShowMoreListForHiveVO> getShowMoreBox(){
+    return Hive.box<ShowMoreListForHiveVO>(BOX_NAME_SHOW_MORE_LIST_FOR_HIVE_VO);
   }
 
 }

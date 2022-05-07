@@ -31,7 +31,12 @@ const double BOOK_SIZE_IN_lIST_GRID_PAGE_CONTAINER_HEIGHT = 260.0;
 const double BOOK_SIZE_IN_lIST_GRID_PAGE_CONTAINER_WIDTH_2 = 100.0;
 const double BOOK_SIZE_IN_lIST_GRID_PAGE_CONTAINER_HEIGHT_2 = 180.0;
 
-const String IMAGE_CONSTANT = "https://cdn.pastemagazine.com/www/system/images/photo_albums/best-book-covers-july-2019/large/bbcjuly19verynice.jpg?1384968217";
+const String IMAGE_CONSTANT = "./asset/image/no_book.png";
+const String IMAGE_CONSTANT_ONLINE = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUQBGSXhrtGMqY4UotX2SdoS_lu_MLppFrTqsU4-7BXuJmsPlbviwKYwThCDYDq5zTZto&usqp=CAU";
+
+const String NOW_MORE_BOOKS = "No More Books";
+const String NO_BOOKS_TEXT = "No books";
+const String NO_RESULT_TEXT = "No result";
 
 const String TAB_EBOOK = "Ebooks";
 const String TAB_AUDIOBOOK = "AudioBooks";
@@ -89,6 +94,8 @@ const GIFT_TAB_IN_DETAIL = "Gift";
 
 const String ENTE_SHELF_NAME_TEXT = "Enter shelf name";
 const String REQUIRED_TEXT = "Required";
+
+const String AUTHOR_TEXT = "J. David McSwane is a reporter in ProPublica\'s DC office.Previously,he was an investigative reporter for The Dallas Morning News and the Austin American-Statesman.";
 
 const BOOK_NAME = "SIN EATER";
 

@@ -1,4 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
+
+import 'package:the_library_app/data/vos/overview/book_vo.dart';
 import 'package:the_library_app/data/vos/show_more/show_more_result_vo.dart';
 
 part 'show_more_response.g.dart';
@@ -19,7 +21,7 @@ class ShowMoreResponse {
   String? lastModified;
 
   @JsonKey(name: "results")
-  List<ShowMoreResultVO>? result;
+  List<BookVO>? result;
 
   ShowMoreResponse({
     this.status,
@@ -28,7 +30,6 @@ class ShowMoreResponse {
     this.lastModified,
     this.result,
   });
-
 
     factory ShowMoreResponse.fromJson(Map<String,dynamic> json) => _$ShowMoreResponseFromJson(json);
 

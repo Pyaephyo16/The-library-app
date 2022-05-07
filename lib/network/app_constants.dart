@@ -1,12 +1,13 @@
 const BASE_URL = "https://api.nytimes.com";
-const SEARCH_BASE_URL = "https://www.googleapis.com/books/v1/";
+const SEARCH_BASE_URL = "https://www.googleapis.com";
 
 const END_POINT_OVERVIEW = "/svc/books/v3/lists/overview.json";
 const END_POINT_VIEW_MORE = "/svc/books/v3/lists.json";
-const END_POINT_SEARCH = "volumes";
+const END_POINT_SEARCH = "/books/v1/volumes";
 
 const String API_KEY = "api-key";
 const String PUBLISHED_DATE = "published_date";
+const String NAME = "q";
 
 const String LIST = "list";
 const String OFFSET = "offset";

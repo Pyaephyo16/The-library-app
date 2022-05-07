@@ -19,7 +19,7 @@ class BookListTitleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(right: padd,left: MARGIN_MEDIUM),
+      padding: EdgeInsets.only(right: MARGIN_MEDIUM_2,left: padd),
       child: Row(
                   children: [
                      Visibility(

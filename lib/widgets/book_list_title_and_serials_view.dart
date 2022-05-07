@@ -11,10 +11,12 @@ class BookListTileAndSerialsView extends StatelessWidget {
   final List<BookVO> books;
   final Function(int) onClick;
   final Function goToNext;
+  final bool isShowPrice;
 
   BookListTileAndSerialsView({
     required this.title,
     required this.books,
+    required this.isShowPrice,
     required this.onClick,
     required this.goToNext,
   });
@@ -30,13 +32,14 @@ class BookListTileAndSerialsView extends StatelessWidget {
           BookListTitleView(
               isListFromHome: false,
               title: title,
-              padd: MARGIN_SMALL,
+              padd: MARGIN_MEDIUM_2,
               goToNext: (){
                 goToNext();
               },
           ),
           HorizontalBookListView(
             books: books,
+            isShowPrice: isShowPrice,
             onClick: (userSelectBookIndex) => onClick(userSelectBookIndex),
           ),
         ],
@@ -49,9 +52,11 @@ class HorizontalBookListView extends StatelessWidget {
 
   final List<BookVO> books;
   final Function(int) onClick;
+  final bool isShowPrice;
 
   HorizontalBookListView({
     required this.books,
+    required this.isShowPrice,
     required this.onClick,
   });
 
@@ -65,13 +70,17 @@ class HorizontalBookListView extends StatelessWidget {
         itemCount: books.length,
         itemBuilder: (context,index){
           return BookView(
-            name: books[index].title ?? "",
+            isInShelf: false,
+            isShowPrice: isShowPrice,
+            name: books[index].title ?? books[index].searchResult?.volumeInfo?.title ?? "",
             price: books[index].price ?? "",
-            image: books[index].bookImage ?? "",
+            author: books[index].author ?? books[index].searchResult?.volumeInfo?.authors?.first ?? "",
+            image: books[index].bookImage ?? books[index].searchResult?.volumeInfo?.imageLinks?.thumbnail ?? IMAGE_CONSTANT_ONLINE,
             bookWidth: BOOK_COVER_CONTAINER_WIDTH,
             bookHeight: BOOK_COVER_CONTAINER_HEIGHT,
             SizeOfName: TEXT_SMALL_1X,
             isVisible: true,
+            sheetFun: (){},
             onClick: ()=> onClick(index),
           );
         },

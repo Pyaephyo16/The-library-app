@@ -4,11 +4,17 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:the_library_app/blocs/book_detail_bloc.dart';
 import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/blocs/show_more_bloc.dart';
+import 'package:the_library_app/blocs/your_books_bloc.dart';
 import 'package:the_library_app/data/vos/overview/book_list_vo.dart';
 import 'package:the_library_app/data/vos/overview/book_vo.dart';
+import 'package:the_library_app/data/vos/overview/result_vo.dart';
 import 'package:the_library_app/data/vos/show_more/show_more_result_vo.dart';
 import 'package:the_library_app/dummy/dummy_data.dart';
+import 'package:the_library_app/pages/Views/audiobook_view.dart';
+import 'package:the_library_app/pages/Views/ebooks_view.dart';
 import 'package:the_library_app/pages/book_detail_page.dart';
 import 'package:the_library_app/pages/book_list_in_grid.dart';
 import 'package:the_library_app/resources/colors.dart';
@@ -16,6 +22,7 @@ import 'package:the_library_app/resources/constants.dart';
 import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/view_items/book_list_title_view.dart';
 import 'package:the_library_app/view_items/book_name_and_info_view.dart';
+import 'package:the_library_app/view_items/divide_line_view.dart';
 import 'package:the_library_app/view_items/option_button_view.dart';
 import 'package:the_library_app/widgets/book_list_title_and_serials_view.dart';
 import 'package:the_library_app/widgets/book_view_for_carousel.dart';
@@ -25,16 +32,36 @@ class HomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.only(top: MARGIN_MEDIUM_2),
+      color: Colors.white,
+      //padding: EdgeInsets.only(top: MARGIN_MEDIUM_2),
       child: ListView(
         children: [
-          SizedBox(height: MARGIN_OVER_EXTRA_2,),
-         CarouselBookView(
-           bookListForCarousel: bookListForCarousel,
-           menuFun: (index){
-             BookOptionBtmSheet(context, index);
-           },
+          SizedBox(height: MARGIN_OVER),
+         Selector<YourBooksBloc,List<BookVO>>(
+           selector: (context,bloc) => bloc.listForCarousel ?? [],
+           shouldRebuild: (previous,next) => previous != next,
+           builder: (context,listForCarousel,child) =>
+           (listForCarousel.isEmpty || listForCarousel == null) 
+           ?
+           NoBookViewInCarousel(
+             title: NO_BOOKS_TEXT,
+           )
+           :
+            CarouselBookView(
+             bookListForCarousel: listForCarousel.reversed.toList(),
+             menuFun: (book){
+               BookOptionBtmSheet(context,book);
+             },
+           ),
          ),
+          // SizedBox(height: MARGIN_FOR_CAROUSEL,),
+          // ElevatedButton(
+          //   onPressed: (){
+          //     YourBooksBloc _bloc = Provider.of(context,listen: false);
+          //     _bloc.deleteFromCarouselBook();
+          //   },
+          //  child: Text("Delete From Carousel"),
+          //  ),
          SizedBox(height: MARGIN_FOR_CAROUSEL,),
          DefaultTabController(
            length: 2,
@@ -69,47 +96,42 @@ class HomeTab extends StatelessWidget {
               selector: (context,bloc) => bloc.tabIndex,
               shouldRebuild: (pre,next) => pre != next,
               builder: (context,tabIndex,child) =>
-               Selector<HomePageBloc,List<BookListVO>>(
-                 selector: (context,bloc) => bloc.bookLists ?? [],
+               Selector<HomePageBloc,ResultVO>(
+                 selector: (context,bloc) => bloc.results ?? ResultVO.empty(),
                  shouldRebuild: (previous,next) => previous != next,
-                 builder: (context,bookList,child) =>
-                  Container(
-                  width: MediaQuery.of(context).size.width,
-                  child: (tabIndex==0) ?
-                   EbooksView(
-                     bookList: bookList,
-                     onClick: (userSelectBook) =>
-                        navigateToNextScreen(context,BookDetailPage(
-                          userSelectBook: userSelectBook,
-                          userSelectBookFromShowMore: ShowMoreResultVO.empty(),
-                          isOverView: true,
-                          )),
-                      goToNext: (index){
-                        HomePageBloc _bloc = Provider.of(context,listen: false);
-                        _bloc.clickForMoreView(index).then((value){
-                           navigateToNextScreen(context,BookListInGrid(
-                          searchText: "",
-                          isFromSearchPage: false,
-                        ));
-                        });
-                      },
-                   ) 
-                   : 
-                   AudioBooksView(
-                     onClick: (userSelectBookIndex) =>
-                        navigateToNextScreen(context,BookDetailPage(
-                          userSelectBook: BookVO.empty(),
-                          userSelectBookFromShowMore: ShowMoreResultVO.empty(),
-                          isOverView: false,
-                          )),
-                        goToNext: (){
-                        navigateToNextScreen(context,BookListInGrid(
-                          searchText: "Recent Price Drops",
-                          isFromSearchPage: false,
-                        ));
-                      },
-                   ),
-                             ),
+                 builder: (context,result,child) =>
+                  Selector<YourBooksBloc,List<BookVO>>(
+           selector: (context,bloc) => bloc.listForCarousel ?? [],
+           shouldRebuild: (previous,next) => previous != next,
+           builder: (context,listForCarousel,child) =>
+                     Container(
+                    width: MediaQuery.of(context).size.width,
+                    child: (tabIndex==0) ?
+                     EbooksView(
+                       bookList: result.lists ?? [],
+                       onClick: (book){
+                         BookDetailBloc _bloc = Provider.of(context,listen: false);
+                         _bloc.tapForDetail(book,listForCarousel).then((value){
+                          navigateToNextScreen(context,BookDetailPage());
+                         });
+                       },
+                        goToNext: (index){
+                          ShowMoreBloc _bloc = Provider.of(context,listen: false);
+                          _bloc.clickForMoreView(index,result).then((value){
+                             navigateToNextScreen(context,BookListInGrid());
+                          });
+                        },
+                     ) 
+                     : 
+                     AudioBooksView(
+                       onClick: (userSelectBookIndex) =>
+                          navigateToNextScreen(context,BookDetailPage()),
+                          goToNext: (){
+                          navigateToNextScreen(context,BookListInGrid());
+                        },
+                     ),
+                               ),
+                  ),
                ),
             )
         ],
@@ -122,7 +144,7 @@ class HomeTab extends StatelessWidget {
          MaterialPageRoute(builder: (BuildContext context) => page));
   }
 
-    Future<dynamic> BookOptionBtmSheet(BuildContext context,int index) {
+    Future<dynamic> BookOptionBtmSheet(BuildContext context,BookVO book) {
     return showModalBottomSheet(
                       context: context,
                           builder: (_){
@@ -133,9 +155,11 @@ class HomeTab extends StatelessWidget {
                                        Padding(
                                          padding: const EdgeInsets.symmetric(vertical: MARGIN_PRE_SMALL,horizontal: MARGIN_MEDIUM_2),
                                          child: BookNameAndInfoView(
+                                           onClick: (){},
                                            isSheet: true,
-                                           title: bookDummy[index].title ?? "",
-                                           content: bookDummy[index].content ?? "",
+                                           image: book.bookImage ?? book.searchResult?.volumeInfo?.imageLinks?.thumbnail ?? IMAGE_CONSTANT_ONLINE,
+                                           title: book.title ?? book.searchResult?.volumeInfo?.title ?? book.bookDetails?.first.title ?? "",
+                                           content: book.author ?? book.searchResult?.volumeInfo?.authors?.first ?? book.bookDetails?.first.author ?? "",
                                            isInShelf: false,
                                          ),
                                        ),
@@ -187,10 +211,30 @@ class HomeTab extends StatelessWidget {
   }
 }
 
+class NoBookViewInCarousel extends StatelessWidget {
+  const NoBookViewInCarousel({
+    Key? key,
+    required this.title,
+  }) : super(key: key);
+
+  final String title;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Text(title,
+      style: TextStyle(
+        color: CREATE_BUTTON_COLOR,
+        fontSize: TEXT_MEDIUM,
+      ),
+      ),);
+  }
+}
+
 class CarouselBookView extends StatelessWidget {
   
-  final List<Widget> bookListForCarousel;
-  final Function(int) menuFun;
+  final List<BookVO> bookListForCarousel;
+  final Function(BookVO) menuFun;
 
   CarouselBookView({
     required this.bookListForCarousel,
@@ -199,28 +243,14 @@ class CarouselBookView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // return CarouselSlider(
-    //    items: bookListForCarousel,
-    //    options: CarouselOptions(
-    //       height: CAROUSEL_HEIGHT,
-    //       aspectRatio: 16/9,
-    //       viewportFraction: 0.6,
-    //       initialPage: 0,
-    //       enableInfiniteScroll: false,
-    //       reverse: false,
-    //       autoPlay: false,
-    //       enlargeCenterPage: true,
-    //       scrollDirection: Axis.horizontal,
-    //    ),
-    //  );
     return CarouselSlider.builder(
-        itemCount: bookListCarouselImage.length,
+        itemCount: bookListForCarousel.length,
         itemBuilder: (BuildContext context,int index,int pageViewIndex){
           return BookViewForCarousel(
-    image: bookListCarouselImage[index],
+    image: bookListForCarousel[index].bookImage ?? bookListForCarousel[index].searchResult?.volumeInfo?.imageLinks?.thumbnail  ?? IMAGE_CONSTANT_ONLINE,
     isSample: false,
     menuFun: (){
-      menuFun(index);
+      menuFun(bookListForCarousel[index]);
     },
   );
         },
@@ -239,110 +269,6 @@ class CarouselBookView extends StatelessWidget {
   }
 }
 
-class EbooksView extends StatelessWidget {
 
-  final List<BookListVO> bookList;
-  final Function(BookVO) onClick;
-  final Function(int) goToNext;
-
-  EbooksView({
-    required this.bookList,
-    required this.onClick,
-    required this.goToNext,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    // return Column(
-    //   mainAxisSize: MainAxisSize.min,
-    //   children: [
-    //     BookListTileAndSerialsView(
-    //       title: EBOOK_LIST_TITLE_1,
-    //       onClick: () => onClick(),
-    //       goToNext: (){
-    //         goToNext();
-    //       },
-    //     ),
-    //     BookListTileAndSerialsView(
-    //       title: EBOOK_LIST_TITLE_2,
-    //      onClick: () => onClick(),
-    //      goToNext: (){
-    //         goToNext();
-    //       },
-    //     ),
-    //     BookListTileAndSerialsView(
-    //       title: EBOOK_LIST_TITLE_3,
-    //       onClick: () => onClick(),
-    //       goToNext: (){
-    //         goToNext();
-    //       },
-    //     ),
-    //   ],
-    // );
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: NeverScrollableScrollPhysics(),
-      itemCount: bookList.length,
-      itemBuilder: (BuildContext context,int indexO){
-        return BookListTileAndSerialsView(
-          title: bookList[indexO].listName ?? "",
-          books: bookList[indexO].books ?? [],
-           onClick: (userSelectBookIndex){
-             onClick(bookList[indexO].books?[userSelectBookIndex] ?? BookVO.empty());
-           },
-            goToNext:()=> goToNext(indexO),
-            );
-      },
-    );
-  }
-
- 
-
-}
-
-class AudioBooksView extends StatelessWidget {
-  final Function(int) onClick;
-  final Function goToNext;
-
-  AudioBooksView({
-    required this.onClick,
-    required this.goToNext,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-       mainAxisSize: MainAxisSize.min,
-      children: [
-        BookListTileAndSerialsView(
-          books: [],
-          title: AUDIOBOOK_LIST_TITLE_1,
-          onClick: (userSelectBookIndex) => onClick(userSelectBookIndex),
-          goToNext: (){
-            goToNext();
-          },
-          ),
-          BookListTileAndSerialsView(
-            books: [],
-          title: AUDIOBOOK_LIST_TITLE_2,
-          onClick: (userSelectBookIndex) => onClick(userSelectBookIndex),
-          goToNext: (){
-            goToNext();
-          },
-          ),
-          BookListTileAndSerialsView(
-            books: [],
-          title: AUDIOBOOK_LIST_TITLE_3,
-          onClick: (userSelectBookIndex) => onClick(userSelectBookIndex),
-          goToNext: (){
-            goToNext();
-          },
-          ),
-      ],
-    );
-  }
-
-     
-}
 
 

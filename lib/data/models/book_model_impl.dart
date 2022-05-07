@@ -3,13 +3,16 @@ import 'package:the_library_app/data/models/book_model.dart';
 import 'package:the_library_app/data/vos/overview/book_list_vo.dart';
 import 'package:the_library_app/data/vos/overview/book_vo.dart';
 import 'package:the_library_app/data/vos/overview/result_vo.dart';
+import 'package:the_library_app/data/vos/overview/show_more_list_for_hive_vo.dart';
 import 'package:the_library_app/data/vos/show_more/book_details_vo.dart';
 import 'package:the_library_app/data/vos/show_more/show_more_result_vo.dart';
 import 'package:the_library_app/network/app_constants.dart';
 import 'package:the_library_app/network/data_agents/book_data_agent.dart';
 import 'package:the_library_app/network/data_agents/retrofit_data_agent_impl.dart';
+import 'package:the_library_app/persistance/abstraction_layer/book_list_for_carousel_dao.dart';
 import 'package:the_library_app/persistance/abstraction_layer/overview_dao.dart';
 import 'package:the_library_app/persistance/abstraction_layer/show_more_dao.dart';
+import 'package:the_library_app/persistance/daos/book_list_for_carousel_dao_impl.dart';
 import 'package:the_library_app/persistance/daos/overview_dao_impl.dart';
 import 'package:collection/collection.dart';
 import 'package:the_library_app/persistance/daos/show_more_dao_impl.dart';
@@ -21,6 +24,7 @@ class BookModelImpl extends BookModel{
   ///Dao
   OverViewDao mOverView = OverViewDaoImpl();
   ShowMoreDao mShowMore = ShowMoreDaoImpl();
+  BookListForCarouselDao mBookListCarousel = BookListForCarouselDaoImpl();
 
   static final BookModelImpl _singleton = BookModelImpl._internal();
 
@@ -51,26 +55,54 @@ class BookModelImpl extends BookModel{
   }
 
     @override
-  Future<List<ShowMoreResultVO>?> showMoreBooks(String list, String offset, String bestSellersDate, String publishedDate) {
+  Future<List<BookVO>?> showMoreBooks(String list, String offset, String bestSellersDate, String publishedDate) {
     print("Show more data Layer =================> $API_KEY_VALUE $list $offset $bestSellersDate $publishedDate");
     return dataAgent.showMoreBooks(API_KEY_VALUE, list, offset, bestSellersDate, publishedDate).then((value){
-        List<ShowMoreResultVO> tempOuter = value?.map((dataOuter){
+          List<BookVO> dataForBook = value?.first ?? [];
+          dataForBook.forEach((element) {
+              element.numResults = value?[1];
+              print("Num result check ====================> ${value?[1]}");
+          });
+        List<BookVO> tempOuter = dataForBook.map((dataOuter){
+                dataOuter.time = "0";
             List<BookDetailsVO> tempInner = dataOuter.bookDetails?.map((dataInner){
                 dataInner.time = "0";
                 return dataInner;
             }).toList() ?? [];
             return dataOuter;
-        }).toList() ?? [];
-        mShowMore.saveAllShowMoreBooks(value ?? []);
-        return Future.value(value);
+        }).toList();
+
+        ShowMoreListForHiveVO listData = ShowMoreListForHiveVO(bookList: tempOuter);
+        mShowMore.saveAllShowMoreBooks(publishedDate,listData);
+        return Future.value(tempOuter);
     }).catchError((error){
         print("Show more Data layer Error ==========> $error");
     });
   }
 
-   
- 
+  
+  @override
+  void putUserTapBook(String name, BookVO book) {
+    mBookListCarousel.saveUserTapBook(name, book);
+  }
 
+  
+  @override
+  Future<List<BookVO>> searchBook(String name) {
+    print("Search data layer ==========> $name");
+    List<BookVO> temp = [];
+   return dataAgent.searchBookResult(name).then((value){
+      value?.forEach((element) {
+        temp.add(BookVO(searchResult: element));
+      });
+      return Future.value(temp);
+    }).catchError((error){
+       print("Search Data layer Error ==========> $error");
+    });
+  }
+
+
+   
 
   ///Database
 
@@ -84,13 +116,27 @@ class BookModelImpl extends BookModel{
   }
 
   @override
-  Stream<List<ShowMoreResultVO>> showMoreBooksDatabase(String list,String offset,String bestSellersDate,String publishedDate) {
+  Stream<ShowMoreListForHiveVO?> showMoreBooksDatabase(String list,String offset,String bestSellersDate,String publishedDate) {
     this.showMoreBooks(list, offset, bestSellersDate, publishedDate);
     return mShowMore
       .getAllShowMoreBooksEventStream()
-      .startWith(mShowMore.getAllShowMoreBooksStream())
-      .map((event) => mShowMore.getAllShowMoreBooksData());
+      .startWith(mShowMore.getAllShowMoreBooksStream(publishedDate))
+      .map((event) => mShowMore.getAllShowMoreBooksData(publishedDate));
   }
+
+  @override
+  Stream<List<BookVO>> getUserTapBookDatabase() {
+    return mBookListCarousel
+    .getUserTapBookListEventStream()
+    .startWith(mBookListCarousel.getUserTapBookListStream())
+    .map((event) => mBookListCarousel.getUserTapBookListData());
+  }
+
+  @override
+  void deleteBooksFromCarouselDatabase() {
+    mBookListCarousel.deleteBooksFromCarousel();
+  }
+
 
 
 

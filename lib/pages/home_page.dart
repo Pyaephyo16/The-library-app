@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/crate_shelf_page_bloc.dart';
 import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/pages/Views/shelves_view.dart';
 import 'package:the_library_app/pages/create_shelf_page.dart';
 import 'package:the_library_app/pages/search_page.dart';
 import 'package:the_library_app/pages/tabs/home_tab.dart';
@@ -26,6 +27,28 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        centerTitle: true,
+        toolbarHeight: 80,
+        title: Padding(
+          padding: const EdgeInsets.only(top: 9.6),
+          child: GestureDetector(
+            onTap: (){
+              navigateToNextScreen(context, SearchPage());
+            },
+            child: SearchFieldSection(
+                  searchText: search,
+                  isSearchPage: false,
+                  prefixTouch: (){},
+                  icon: Icon(Icons.search,size: MARGIN_MEDIUM_3X),
+                   typing: (str){},
+                 submittedFun: (str){},
+                ),
+          ),
+        ),
+      ),
       body: Stack(
         children: [
             Positioned.fill(
@@ -37,27 +60,27 @@ class HomePage extends StatelessWidget {
                 ),
               ),
 
-            Positioned(
-              top: 66,
-              left: 16,
-              right: 16,
-              child: Padding(
-                 padding: EdgeInsets.only(top: MARGIN_MEDIUM_2),
-                child: GestureDetector(
-                  onTap: (){
-                    navigateToNextScreen(context, SearchPage());
-                  },
-                  child: SearchFieldSection(
-                    searchText: search,
-                    isSearchPage: false,
-                    prefixTouch: (){},
-                    icon: Icon(Icons.search,size: MARGIN_MEDIUM_3X),
-                    typing: (str){},
-                    submittedFun: (str){},
-                  ),
-                ),
-              ),
-              ),
+            // Positioned(
+            //   top: 66,
+            //   left: 16,
+            //   right: 16,
+            //   child: Padding(
+            //      padding: EdgeInsets.only(top: MARGIN_MEDIUM_2),
+            //     child: GestureDetector(
+            //       onTap: (){
+            //         navigateToNextScreen(context, SearchPage());
+            //       },
+            //       child: SearchFieldSection(
+            //         searchText: search,
+            //         isSearchPage: false,
+            //         prefixTouch: (){},
+            //         icon: Icon(Icons.search,size: MARGIN_MEDIUM_3X),
+            //         typing: (str){},
+            //         submittedFun: (str){},
+            //       ),
+            //     ),
+            //   ),
+            //   ),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.miniCenterFloat,

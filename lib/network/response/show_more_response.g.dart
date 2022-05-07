@@ -13,7 +13,7 @@ ShowMoreResponse _$ShowMoreResponseFromJson(Map<String, dynamic> json) =>
       numResults: json['num_results'] as int?,
       lastModified: json['last_modified'] as String?,
       result: (json['results'] as List<dynamic>?)
-          ?.map((e) => ShowMoreResultVO.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => BookVO.fromJson(e as Map<String, dynamic>))
           .toList(),
     );
 
