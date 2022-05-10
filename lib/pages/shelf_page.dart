@@ -1,20 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:the_library_app/blocs/crate_shelf_page_bloc.dart';
-import 'package:the_library_app/blocs/home_page_bloc.dart';
 import 'package:the_library_app/blocs/shelf_bloc.dart';
-import 'package:the_library_app/blocs/your_books_bloc.dart';
-import 'package:the_library_app/data/vos/overview/book_list_vo.dart';
+import 'package:the_library_app/data/vos/chip_vo.dart';
 import 'package:the_library_app/data/vos/overview/book_vo.dart';
-import 'package:the_library_app/data/vos/show_more/show_more_result_vo.dart';
-import 'package:the_library_app/dummy/dummy_data.dart';
+import 'package:the_library_app/data/vos/shelf_vo.dart';
 import 'package:the_library_app/pages/Views/your_books_view.dart';
 import 'package:the_library_app/pages/book_detail_page.dart';
-import 'package:the_library_app/pages/book_list_in_grid.dart';
-import 'package:the_library_app/pages/create_shelf_page.dart';
 import 'package:the_library_app/pages/search_page.dart';
-import 'package:the_library_app/pages/tabs/library_tab.dart';
 import 'package:the_library_app/resources/colors.dart';
 import 'package:the_library_app/resources/constants.dart';
 import 'package:the_library_app/resources/dimens.dart';
@@ -26,9 +19,11 @@ import 'package:the_library_app/widgets/shelf_creation_section.dart';
 
 class ShelfPage extends StatelessWidget {
 
-  final int index;
+  final int userSelectIndex;
 
-  ShelfPage({required this.index});
+  ShelfPage({
+    required this.userSelectIndex,
+    });
 
   final TextEditingController newName = TextEditingController();
   final GlobalKey<FormState> formKey = GlobalKey<FormState>();
@@ -36,175 +31,201 @@ class ShelfPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        children: [
-           Selector<CreateShelfPageBloc,List<ShelfVO>>(
-            selector: (context,bloc) => bloc.shelfsName,
-            shouldRebuild: (previous,next) => previous != next,
-            builder: (context,shelfName,child) =>
-             ShelfDetailAppBarView(
-              renameOrDelShelf: (index){
-                ShelfBloc _bloc = Provider.of(context,listen: false);
-                _bloc.optionsForShelf(index);
-              },
-              deleteShelf: (){
-                deleteShelfFun(
-                  context,
-                   shelfName,
-                  delete: (){
-                    ShelfBloc bloc = Provider.of(context,listen: false);
-                    bloc.deleteShelf(index).then((value){
-                      Navigator.pop(context);
-                      Navigator.pop(context);
-                    });
-                  },
-                  );
-              },
-              search: (){
-                navigateToNextScreen(context, SearchPage());
-              },
-              callRename: (){
-                newName.text = shelfName[index].title ?? "";
-                FocusScope.of(context).requestFocus(focusNode);
-              },
-            ),
-          ),
-           Selector<CreateShelfPageBloc,List<ShelfVO>>(
-            selector: (context,bloc) => bloc.shelfsName,
-            shouldRebuild: (previous,next) => previous != next,
-            builder: (context,shelfName,child) =>
-             Selector<ShelfBloc,int?>(
-              selector: (context,bloc) => bloc.shelfOptionValue,
+
+    print("user select index ====================> $userSelectIndex");
+
+    return ChangeNotifierProvider<ShelfBloc>.value(
+      value : ShelfBloc(userSelectIndex),
+      child: Scaffold(
+        body: ListView(
+          children: [
+             Selector<ShelfBloc,List<ShelfVO>>(
+              selector: (context,bloc) => bloc.shelfs ?? [],
               shouldRebuild: (previous,next) => previous != next,
-              builder: (context,shelfOptionValue,child) { 
-                return (shelfName.length < 1) ? 
-                Center(child: Text(EMPTY_TEXT),)
-                :
-                (shelfOptionValue == 0)  ? 
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
-                  child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.min,
-            children: [
-                CreateButton(
-                  createBtn:  (){
-                          if(formKey.currentState!.validate()){
-            ShelfBloc bloc = Provider.of(context,listen: false);
-                          bloc.renameShelfName(index, newName.text);
-                    }
-                     },
-                  ),
-                  ShelfTextView(
-                    name: newName,
-                     formKey: formKey,
-                      isFocus: true,
-                      focusNode: focusNode,
-                      ),
-            ],
-          )
-                )
-                :
-                 Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
-                     child: BookNameAndInfoView(
-                       onClick: (){},
-                    isSheet: false,
-                    image: "",
-                    title: shelfName[index].title ?? "",
-                    content: "${shelfName.length} books",
-                    isInShelf: true,
-                                  ),
-                                );
-              }
+              builder: (context,shelfs,child) =>
+               ShelfDetailAppBarView(
+                renameOrDelShelf: (index){
+                  ShelfBloc _bloc = Provider.of(context,listen: false);
+                  _bloc.optionsForShelf(index);
+                },
+                deleteShelf: (){
+                  deleteShelfFun(
+                    context,
+                     shelfs,
+                    delete: (){
+                      ShelfBloc bloc = Provider.of(context,listen: false);
+                      bloc.deleteShelf(userSelectIndex).then((value){
+                        Navigator.pop(context);
+                        Navigator.pop(context);
+                      });
+                    },
+                    );
+                },
+                search: (){
+                  navigateToNextScreen(context, SearchPage());
+                },
+                callRename: (){
+                  newName.text = shelfs[userSelectIndex].shelfName ?? "";
+                  FocusScope.of(context).requestFocus(focusNode);
+                },
+              ),
             ),
-          ),
-          Divider(color: BTM_SHEET_OPTION_ICON_COLOR,thickness: 1,),
-          SizedBox(height: MARGIN_SMALL_1X,),
-          Container(
-            child: Selector<YourBooksBloc,int>(
-                            selector: (context,bloc) => bloc.gpValue,
-                            shouldRebuild: (previous,next) => previous != next,
-                            builder: (context,gpValue,child) =>
-                            Selector<YourBooksBloc,List<ChipVO>>(
-                            selector: (context,bloc) => bloc.chips,
-                            shouldRebuild: (previous,next) => previous != next,
-                            builder: (context,chips,child) =>
-                              Selector<YourBooksBloc,int>(
-                            selector: (context,bloc) => bloc.sortStyle,
-                            shouldRebuild: (previous,next) => previous != next,
-                            builder: (context,sortStyle,child) =>
-                                  YourBooksView(
-                                    listForCarousel: [],
-                                    sheetFun: (index,book){},
-                                   chips: chips,
-                                 gpValue: gpValue,
-                                 sortStyle: sortStyle,
-                                  ChooseTab: (gpValue){
-                                    BtmSheet(
-                                      context,
-                                       gpValue,
-                                      title: BTM_SHEET_TITLE,
-                                      rd1Text: BTM_RD_1,
-                                      rd2Text: BTM_RD_2,
-                                      rd3Text: BTM_RD_3,
-                                      rd1: (val){
-                                        YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                             _bloc.chooseSort(val).then((value) => Navigator.pop(context));
-                                      },
-                                      rd2: (val){
-                                         YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                                _bloc.chooseSort(val).then((value) => Navigator.pop(context));
-                                      },
-                                      rd3: (val){
-                                         YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                               _bloc.chooseSort(val).then((value) => Navigator.pop(context));
-                                      }
-                                       );
-                                  },
-                                  onChooseStyle: (sortStyle){
-                                      BtmSheet(
-                                        context,
-                                         sortStyle,
-                                          title: BTM_SHEET_SORT_TITLE,
-                                           rd1Text: BTM_RD_SORT_1,
-                                            rd2Text: BTM_RD_SORT_2,
-                                             rd3Text: BTM_RD_SORT_3,
-                                              rd1: (val){
-                                        YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                             _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
-                                              },
-                                               rd2: (val){
-                                        YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                             _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
-                                               },
-                                                rd3: (val){
-                                        YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                             _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
-                                                }
-                                                );
-                                  },
-                                  TapGenre: (index){
-                                    YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                    _bloc.TapFunction(index);
-                                  },
-                                  cancelGenre: (){
-                                     YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                    _bloc.TapFunction(null);
-                                  },
-                                  tabBookInfoBtn: (index,book){
-                           BookOptionBtmSheet(context,index);
-                                  },
-                                  onClick: (index){
-                                    navigateToNextScreen(context, BookDetailPage());
-                                  },
+             Selector<ShelfBloc,List<ShelfVO>>(
+              selector: (context,bloc) => bloc.shelfs ?? [],
+              shouldRebuild: (previous,next) => previous != next,
+              builder: (context,shelfs,child) =>
+               Selector<ShelfBloc,int?>(
+                selector: (context,bloc) => bloc.shelfOptionValue,
+                shouldRebuild: (previous,next) => previous != next,
+                builder: (context,shelfOptionValue,child) { 
+                  return (shelfs.length < 1) ? 
+                  Center(child: Text(EMPTY_TEXT),)
+                  :
+                  (shelfOptionValue == 0)  ? 
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+                    child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                  CreateButton(
+                    createBtn:  (){
+                            if(formKey.currentState!.validate()){
+              ShelfBloc bloc = Provider.of(context,listen: false);
+                            bloc.renameShelfName(userSelectIndex, newName.text);
+                      }
+                       },
+                    ),
+                    ShelfTextView(
+                      name: newName,
+                       formKey: formKey,
+                        isFocus: true,
+                        focusNode: focusNode,
+                        ),
+              ],
+            )
+                  )
+                  :
+                   Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+                       child: BookNameAndInfoView(
+                         onClick: (){},
+                      isSheet: false,
+                      image: "",
+                      title: shelfs[userSelectIndex].shelfName ?? "",
+                      content: "${shelfs[userSelectIndex].books?.length} books",
+                      isInShelf: true,
+                                    ),
+                                  );
+                }
+              ),
+            ),
+            Divider(color: BTM_SHEET_OPTION_ICON_COLOR,thickness: 1,),
+            SizedBox(height: MARGIN_SMALL_1X,),
+            Container(
+              child:  Selector<ShelfBloc,int>(
+                                selector: (context,bloc) => bloc.gpValue,
+                                shouldRebuild: (previous,next) => previous != next,
+                                builder: (context,gpValue,child) =>
+                                Selector<ShelfBloc,List<ChipVO>>(
+                                selector: (context,bloc) => bloc.chips ?? [],
+                                shouldRebuild: (previous,next) => previous != next,
+                                builder: (context,chips,child) =>
+                                Selector<ShelfBloc,List<String>>(
+                                selector: (context,bloc) => bloc.currentBox,
+                                shouldRebuild: (previous,next) => previous != next,
+                                builder: (context,currentBox,child) =>
+                                   Selector<ShelfBloc,int>(
+                                    selector: (context,bloc) => bloc.sortStyle,
+                                    shouldRebuild: (previous,next) => previous != next,
+                                     builder: (context,sortStyle,child) =>
+                                     Selector<ShelfBloc,List<BookVO>>(
+                                selector: (context,bloc) => bloc.booksInShelf ?? [],
+                                shouldRebuild: (previous,next) => previous != next,
+                                builder: (context,booksInShelf,child){
+                                   return (booksInShelf.length == 0) 
+                                            ?
+                                            Center(child: Text("Empty"),) 
+                                            :
+                                       YourBooksView(
+                                          currentBox: currentBox,
+                                          listForCarousel: booksInShelf,
+                                         chips: chips,
+                                       gpValue: gpValue,
+                                       sortStyle: sortStyle,
+                                        ChooseTab: (gpValue){
+                                          BtmSheet(
+                                            context,
+                                             gpValue,
+                                            title: BTM_SHEET_TITLE,
+                                            rd1Text: BTM_RD_1,
+                                            rd2Text: BTM_RD_2,
+                                            rd3Text: BTM_RD_3,
+                                            rd1: (val){
+                                              ShelfBloc _bloc = Provider.of(context,listen: false);
+                                                   _bloc.chooseSort(val,userSelectIndex).then((value) => Navigator.pop(context));
+                                            },
+                                            rd2: (val){
+                                               ShelfBloc _bloc = Provider.of(context,listen: false);
+                                                      _bloc.chooseSort(val,userSelectIndex).then((value) => Navigator.pop(context));
+                                            },
+                                            rd3: (val){
+                                               ShelfBloc _bloc = Provider.of(context,listen: false);
+                                                     _bloc.chooseSort(val,userSelectIndex).then((value) => Navigator.pop(context));
+                                            }
+                                             );
+                                        },
+                                        onChooseStyle: (sortStyle){
+                                            BtmSheet(
+                                              context,
+                                               sortStyle,
+                                                title: BTM_SHEET_SORT_TITLE,
+                                                 rd1Text: BTM_RD_SORT_1,
+                                                  rd2Text: BTM_RD_SORT_2,
+                                                   rd3Text: BTM_RD_SORT_3,
+                                                    rd1: (val){
+                                              ShelfBloc _bloc = Provider.of(context,listen: false);
+                                                   _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
+                                                    },
+                                                     rd2: (val){
+                                              ShelfBloc _bloc = Provider.of(context,listen: false);
+                                                   _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
+                                                     },
+                                                      rd3: (val){
+                                              ShelfBloc _bloc = Provider.of(context,listen: false);
+                                                   _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
+                                                      }
+                                                      );
+                                        },
+                                        TapGenre: (indexFromGenre){
+                                          ShelfBloc _bloc = Provider.of(context,listen: false);
+                                          _bloc.TapFunction(indexFromGenre,userSelectIndex);
+                                        },
+                                        cancelGenre: (){
+                                           ShelfBloc _bloc = Provider.of(context,listen: false);
+                                          _bloc.TapFunction(null,userSelectIndex);
+                                        },
+                                        tabBookInfoBtn: (index,book){
+                                             BookOptionBtmSheet(context,index,book);
+                                        },
+                                          sheetFun: (indexForSheet,book){
+                                            BookOptionBtmSheet(context, indexForSheet,book);
+                                          },
+                                        onClick: (index){
+                                          navigateToNextScreen(context, BookDetailPage(
+                                            book: BookVO.empty(),
+                                          ));
+                                        },
+                                        );
+                                }
+                                     ),
                                   ),
-                               ),
-                            )
-                            ),
-          )
-        ],
+                                )
+                                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -219,7 +240,7 @@ class ShelfPage extends StatelessWidget {
                   context: context,
                    builder: (conetxt){
                       return AlertDialog(
-                          title: Text("Delete \'${shelfName[index].title}\'?"),
+                          title: Text("Delete \'${shelfName[userSelectIndex].shelfName}\'?"),
                           content: Text(SHELF_DELETE_CONTENT),
                           actions: [
                            Row(
@@ -254,7 +275,7 @@ class ShelfPage extends StatelessWidget {
                    });
   }
 
-    Future<dynamic> BookOptionBtmSheet(BuildContext context,int index) {
+    Future<dynamic> BookOptionBtmSheet(BuildContext context,int index,BookVO book) {
     return showModalBottomSheet(
                       context: context,
                           builder: (_){
@@ -267,9 +288,9 @@ class ShelfPage extends StatelessWidget {
                                          child: BookNameAndInfoView(
                                            onClick: (){},
                                            isSheet: true,
-                                           image: "",
-                                           title: bookDummy[index].title ?? "",
-                                           content: bookDummy[index].content ?? "",
+                                         image: book.bookImage ?? book.searchResult?.volumeInfo?.imageLinks?.thumbnail ?? IMAGE_CONSTANT_ONLINE,
+                                          title: book.title ?? book.searchResult?.volumeInfo?.title ?? book.bookDetails?.first.title ?? "",
+                                           content: book.author ??  book.searchResult?.volumeInfo?.authors?.first ?? book.bookDetails?.first.author ?? "",
                                            isInShelf: false,
                                          ),
                                        ),

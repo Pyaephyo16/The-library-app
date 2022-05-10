@@ -15,26 +15,38 @@ class CreateShelfPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
-            child: shelfCreateSection(
-              isFocus: true,
-              formKey: formKey,
-               shelfName: shelfName,
-               creation: (){
-                 if(formKey.currentState!.validate()){
-                  CreateShelfPageBloc _bloc = Provider.of(context,listen: false);
-                   _bloc.newShelf(shelfName.text).then((value) => Navigator.pop(context));
-             }
-               },
-               focusNode: focusNode,
-               ),
+    return ChangeNotifierProvider(
+      create: (context) => CreateShelfPageBloc(),
+      child: Scaffold(
+          body: SafeArea(
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+              child: Builder(
+                builder: (context) =>
+                 shelfCreateSection(
+                  isFocus: true,
+                  formKey: formKey,
+                   shelfName: shelfName,
+                   creation: (){
+                     if(formKey.currentState!.validate()){
+                      CreateShelfPageBloc _bloc = Provider.of(context,listen: false);
+                       _bloc.newShelf(shelfName.text).then((value) => Navigator.pop(context));
+                 }
+                   },
+                   focusNode: focusNode,
+                   ),
+              ),
+            ),
           ),
-        ),
+      ),
     );
   }
+
+navigateToNextScreen(BuildContext context,Widget page) {
+    return Navigator.push(context,
+         MaterialPageRoute(builder: (BuildContext context) => page));
+  }
+
 }
 
 

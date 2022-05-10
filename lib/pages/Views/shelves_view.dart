@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/data/vos/shelf_vo.dart';
 import 'package:the_library_app/dummy/dummy_data.dart';
 import 'package:the_library_app/pages/book_list_in_grid.dart';
 import 'package:the_library_app/resources/colors.dart';
@@ -12,33 +15,43 @@ class ShelvesView extends StatelessWidget {
 
   final List<ShelfVO> shelfs;
   final Function(int) goToShelf;
+  final String image;
 
   ShelvesView({
     required this.shelfs,
     required this.goToShelf,
+    required this.image,
   });
 
   @override
   Widget build(BuildContext context) {
+
+    // WidgetsBinding.instance?.addPostFrameCallback((_){
+    //   HomePageBloc bloc= Provider.of(context,listen: false);
+    //   bloc.yourbookOrLib(1);
+    // });
+
     return Container(
-      padding: EdgeInsets.only(top: MARGIN_SMALL,left: 12,right: 12),
-      child: 
-      ListView.separated(
-       separatorBuilder: ((context, index) => DivideLineView(thick: 1,)),
-      shrinkWrap: true,
-       physics: NeverScrollableScrollPhysics(),
-       itemCount: shelfs.length,
-       itemBuilder: (BuildContext context,int index){
-         return 
-          ShelfView(
-           index: index,
-           goToShelf: (index)=> goToShelf(index),
-           title: shelfs[index].title ?? "",
-           book: shelfs[index].content ?? "",
-           );
-       },
-            ),
-    );
+        padding: EdgeInsets.only(top: MARGIN_SMALL,left: 12,right: 12),
+        child: 
+        ListView.separated(
+         separatorBuilder: ((context, index) => DivideLineView(thick: 1,)),
+        shrinkWrap: true,
+         physics: NeverScrollableScrollPhysics(),
+         itemCount: shelfs.length,
+         itemBuilder: (BuildContext context,int index){
+           return 
+            ShelfView(
+             index: index,
+             image:  (shelfs[index].books?.length != 0) ? shelfs[index].books?.first.bookImage ?? shelfs[index].books?.first.searchResult?.volumeInfo?.imageLinks?.thumbnail ?? IMAGE_CONSTANT_ONLINE : IMAGE_CONSTANT_ONLINE,
+             goToShelf: (index)=> goToShelf(index),
+             title: shelfs[index].shelfName ?? "",
+             book: shelfs[index].books?.length ?? 0,
+             isInAddToShelf: false,
+             );
+         },
+        ),
+      );
   }
 }
 
@@ -102,12 +115,16 @@ class ShelfView extends StatelessWidget {
     required this.goToShelf,
     required this.title,
     required this.book,
+    required this.image,
+    required this.isInAddToShelf,
   }) : super(key: key);
 
   final int index;
   final Function goToShelf;
   final String title;
-  final String book;
+  final int book;
+  final String image;
+  final bool isInAddToShelf;
 
   @override
   Widget build(BuildContext context) {
@@ -125,16 +142,19 @@ class ShelfView extends StatelessWidget {
                 },
                 isSheet: false,
                 title: title,
-                image: IMAGE_CONSTANT_ONLINE,
-                content: "$book",
+                image: image,
+                content: "$book books",
                 isInShelf: false,
                 ),
               Spacer(),
-              IconButton(
-                onPressed: (){
-                  goToShelf(index);
-              }, 
-              icon: Icon(Icons.chevron_right,size: MARGIN_MEDIUM_4,),
+              Visibility(
+                visible: !isInAddToShelf,
+                child: IconButton(
+                  onPressed: (){
+                    goToShelf(index);
+                }, 
+                icon: Icon(Icons.chevron_right,size: MARGIN_MEDIUM_4,),
+                ),
               ),
             ],
           ),

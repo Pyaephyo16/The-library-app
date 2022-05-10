@@ -30,6 +30,8 @@ const double BOOK_SIZE_IN_lIST_GRID_PAGE_CONTAINER_WIDTH = 186.0;
 const double BOOK_SIZE_IN_lIST_GRID_PAGE_CONTAINER_HEIGHT = 260.0;
 const double BOOK_SIZE_IN_lIST_GRID_PAGE_CONTAINER_WIDTH_2 = 100.0;
 const double BOOK_SIZE_IN_lIST_GRID_PAGE_CONTAINER_HEIGHT_2 = 180.0;
+const double CREATE_SHELF_BUTTON__WIDTH = 160.0;
+const double CREATE_SHELF_BUTTON_HEIGHT = 50.0; 
 
 const String IMAGE_CONSTANT = "./asset/image/no_book.png";
 const String IMAGE_CONSTANT_ONLINE = "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRUQBGSXhrtGMqY4UotX2SdoS_lu_MLppFrTqsU4-7BXuJmsPlbviwKYwThCDYDq5zTZto&usqp=CAU";
@@ -52,6 +54,8 @@ const BTM_SHEET_TITLE = "Sort by";
 const BTM_RD_1 = "Recent";
 const BTM_RD_2 = "Author";
 const BTM_RD_3 = "Title";
+
+const ADD_TO_SHELF_TEXT = "Add To Shelf";
 
 const BTM_SHEET_SORT_TITLE = "List Style";
 const BTM_RD_SORT_1 = "List";

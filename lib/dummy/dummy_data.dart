@@ -47,79 +47,79 @@ List<Widget> bookListForCarousel = [
   ),
 ];
 
-List<ChipVO> chipData = [
-  ChipVO(title: "Not Started",),
-   ChipVO(title: "In Progress",),
-    ChipVO(title: "Downloaded",),
-     ChipVO(title: "Not Downloaded",),
-      ChipVO(title: "Ebooks",),
-       ChipVO(title: "Horror",),
-  ];
+// List<ChipVO> chipData = [
+//   ChipVO(title: "Not Started",),
+//    ChipVO(title: "In Progress",),
+//     ChipVO(title: "Downloaded",),
+//      ChipVO(title: "Not Downloaded",),
+//       ChipVO(title: "Ebooks",),
+//        ChipVO(title: "Horror",),
+//   ];
 
-class ChipVO {
-    String? title;
-    bool? isSelected;
+// class ChipVO {
+//     String? title;
+//     bool? isSelected;
 
-  ChipVO({required this.title,this.isSelected = false});
+//   ChipVO({required this.title,this.isSelected = false});
 
 
-  @override
-  String toString() => 'ChipVO(title: $title, isSelected: $isSelected)';
+//   @override
+//   String toString() => 'ChipVO(title: $title, isSelected: $isSelected)';
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
+//   @override
+//   bool operator ==(Object other) {
+//     if (identical(this, other)) return true;
   
-    return other is ChipVO &&
-      other.title == title &&
-      other.isSelected == isSelected;
-  }
+//     return other is ChipVO &&
+//       other.title == title &&
+//       other.isSelected == isSelected;
+//   }
 
-  @override
-  int get hashCode => title.hashCode ^ isSelected.hashCode;
-  }
+//   @override
+//   int get hashCode => title.hashCode ^ isSelected.hashCode;
+//   }
 
   
-  List<ShelfVO> shelfs = [
-    ShelfVO(
-      title: "My shelf1",
-      content: "3 books",
-      isSelected: false,
-    ),
-    ShelfVO(
-      title: "My shelf2",
-      content: "5 books",
-      isSelected: false,
-    ),
-  ];
+  // List<ShelfVO> shelfs = [
+  //   ShelfVO(
+  //     title: "My shelf1",
+  //     content: "3 books",
+  //     isSelected: false,
+  //   ),
+  //   ShelfVO(
+  //     title: "My shelf2",
+  //     content: "5 books",
+  //     isSelected: false,
+  //   ),
+  // ];
 
-class ShelfVO {
+// class ShelfVO {
 
-  String? title;
-  String? content;
-  bool? isSelected;
-  ShelfVO({
-   required this.title,
-   required this.content,
-   required this.isSelected,
-  });
+//   String? title;
+//   String? content;
+//   bool? isSelected;
+//   ShelfVO({
+//    required this.title,
+//    required this.content,
+//    required this.isSelected,
+//   });
 
-  @override
-  String toString() => 'ShelfVO(title: $title, content: $content, isSelected: $isSelected)';
+//   @override
+//   String toString() => 'ShelfVO(title: $title, content: $content, isSelected: $isSelected)';
 
-  @override
-  bool operator ==(Object other) {
-    if (identical(this, other)) return true;
+//   @override
+//   bool operator ==(Object other) {
+//     if (identical(this, other)) return true;
   
-    return other is ShelfVO &&
-      other.title == title &&
-      other.content == content &&
-      other.isSelected == isSelected;
-  }
+//     return other is ShelfVO &&
+//       other.title == title &&
+//       other.content == content &&
+//       other.isSelected == isSelected;
+//   }
 
-  @override
-  int get hashCode => title.hashCode ^ content.hashCode ^ isSelected.hashCode;
-}
+//   @override
+//   int get hashCode => title.hashCode ^ content.hashCode ^ isSelected.hashCode;
+// }
 
 class BookTestVO {
   String? title;

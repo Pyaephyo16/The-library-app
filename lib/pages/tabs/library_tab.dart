@@ -5,13 +5,16 @@ import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/book_detail_bloc.dart';
 import 'package:the_library_app/blocs/crate_shelf_page_bloc.dart';
 import 'package:the_library_app/blocs/home_page_bloc.dart';
-import 'package:the_library_app/blocs/your_books_bloc.dart';
+import 'package:the_library_app/blocs/library_tab_bloc.dart';
+import 'package:the_library_app/data/vos/chip_vo.dart';
 import 'package:the_library_app/data/vos/overview/book_list_vo.dart';
 import 'package:the_library_app/data/vos/overview/book_vo.dart';
+import 'package:the_library_app/data/vos/shelf_vo.dart';
 import 'package:the_library_app/data/vos/show_more/show_more_result_vo.dart';
 import 'package:the_library_app/dummy/dummy_data.dart';
 import 'package:the_library_app/pages/Views/shelves_view.dart';
 import 'package:the_library_app/pages/Views/your_books_view.dart';
+import 'package:the_library_app/pages/add_to_shelf_page.dart';
 import 'package:the_library_app/pages/book_detail_page.dart';
 import 'package:the_library_app/pages/book_list_in_grid.dart';
 import 'package:the_library_app/pages/create_shelf_page.dart';
@@ -32,166 +35,219 @@ class LibraryTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      //padding: EdgeInsets.only(top: MARGIN_MEDIUM_2),
-      child: ListView(
-        children: [
-         //SizedBox(height: MARGIN_OVER,),
-          SizedBox(height: MARGIN_MEDIUM_2,),
-          DefaultTabController(
-            length: 2, 
-            child: Selector<HomePageBloc,int>(
-                    selector: (context,bloc) => bloc.libTabIndex,
-                    shouldRebuild: (previous,next) => previous != next,
-                    builder: (context,libTabIndex,child) =>
-               TabBar(
-                      indicatorSize: TabBarIndicatorSize.label,
-                      labelColor: CREATE_BUTTON_COLOR,
-                      unselectedLabelColor: BOOK_EXTRA_DATA_CONTENT_COLOR,
-                    tabs: [
-                      Tab(child: Text(YOUR_BOOKS,
-                      style: TextStyle(
-                    fontSize: TEXT_SMALL_1X,
-                  ),
-                      ),),
-                      Tab(child: Text(SHELVES,
-                      style: TextStyle(
-                    fontSize: TEXT_SMALL_1X,
-                  ),
-                      ),),
-                    ],
-                    onTap: (index){
-                      HomePageBloc bloc = Provider.of(context,listen: false);
-                      bloc.libChooseTab(index);
-                    },
-                  ),
-            ),
-            ),
-            Divider(color:SAMPLE_BACKGROUND_COLOR,),
-            SizedBox(height: MARGIN_SMALL_1X,),
-            Column(
-            mainAxisSize: MainAxisSize.min,
-              children: [ 
-                  Selector<HomePageBloc,int>(
-                    selector: (context,bloc) => bloc.libTabIndex,
-                    shouldRebuild: (previous,next) => previous != next,
-                    builder: (context,libTabIndex,child) =>
-                     Container(
-                    child: (libTabIndex == 0) ?
-                          Selector<YourBooksBloc,int>(
-                            selector: (context,bloc) => bloc.gpValue,
+    return ChangeNotifierProvider<LibraryTabBloc>.value(
+     value: LibraryTabBloc(),
+      child: Container(
+        color: Colors.white,
+        child: Stack(
+          children: [
+            Positioned.fill(
+              child: ListView(
+                children: [
+                  SizedBox(height: MARGIN_MEDIUM_2,),
+                  DefaultTabController(
+                    length: 2, 
+                    child: Selector<LibraryTabBloc,int>(
+                            selector: (context,bloc) => bloc.libTabIndex,
                             shouldRebuild: (previous,next) => previous != next,
-                            builder: (context,gpValue,child) =>
-                            Selector<YourBooksBloc,List<ChipVO>>(
-                            selector: (context,bloc) => bloc.chips,
-                            shouldRebuild: (previous,next) => previous != next,
-                            builder: (context,chips,child) =>
-                              Selector<YourBooksBloc,int>(
-                            selector: (context,bloc) => bloc.sortStyle,
-                            shouldRebuild: (previous,next) => previous != next,
-                            builder: (context,sortStyle,child) =>
-                                   Selector<YourBooksBloc,List<BookVO>>(
-                            selector: (context,bloc) => bloc.listForCarousel ?? [],
-                            shouldRebuild: (previous,next) => previous != next,
-                            builder: (context,listForCarousel,child) =>
-                              (listForCarousel.isEmpty || listForCarousel == null) 
-                              ?
-                              Center(child: Text("Empty"),) 
-                              :
-                                 YourBooksView(
-                                     chips: chips,
-                                     gpValue: gpValue,
-                                     listForCarousel: listForCarousel,
-                                     sortStyle: sortStyle,
-                                    ChooseTab: (gpValue){
-                                      BtmSheet(
-                                        context,
-                                         gpValue,
-                                        title: BTM_SHEET_TITLE,
-                                        rd1Text: BTM_RD_1,
-                                        rd2Text: BTM_RD_2,
-                                        rd3Text: BTM_RD_3,
-                                        rd1: (val){
-                                          YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                               _bloc.chooseSort(val).then((value) => Navigator.pop(context));
-                                        },
-                                        rd2: (val){
-                                           YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                                  _bloc.chooseSort(val).then((value) => Navigator.pop(context));
-                                        },
-                                        rd3: (val){
-                                           YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                                 _bloc.chooseSort(val).then((value) => Navigator.pop(context));
-                                        }
-                                       );
-                                    },
-                                    onChooseStyle: (sortStyle){
-                                        BtmSheet(
-                                          context,
-                                           sortStyle,
-                                            title: BTM_SHEET_SORT_TITLE,
-                                             rd1Text: BTM_RD_SORT_1,
-                                              rd2Text: BTM_RD_SORT_2,
-                                               rd3Text: BTM_RD_SORT_3,
-                                                rd1: (val){
-                                          YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                               _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
-                                                },
-                                                 rd2: (val){
-                                          YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                               _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
-                                                 },
-                                                  rd3: (val){
-                                          YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                               _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
-                                                  }
-                                                  );
-                                    },
-                                    TapGenre: (index){
-                                      YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                      _bloc.TapFunction(index);
-                                    },
-                                    cancelGenre: (){
-                                       YourBooksBloc _bloc = Provider.of(context,listen: false);
-                                      _bloc.TapFunction(null);
-                                    },
-                                    tabBookInfoBtn: (index,book){
-                                           BookOptionBtmSheet(context,index,book);
-                                    },
-                                    sheetFun: (index,book){
-                                      BookOptionBtmSheet(context,index, book);
-                                    },
-                                    onClick: (book){
-                                      BookDetailBloc bloc = Provider.of(context,listen: false);
-                                      bloc.tapFromYourBookViewToDetail(book).then((value){
-                                        navigateToNextScreen(context, BookDetailPage());
-                                      });
-                                    },
-                                    ),
-                                  ),
-                               ),
-                            )
-                            )
-                        :
-                       Selector<CreateShelfPageBloc,List<ShelfVO>>(
-                          selector: (context,bloc) => bloc.shelfsName,
-                          shouldRebuild: (previous,next) => previous != next,
-                          builder: (context,shelfs,child) =>
-                        (shelfs.length < 1) ?
-                        Center(child: Text(EMPTY_TEXT),)
-                        :
-                         ShelvesView(
-                           shelfs: shelfs,
-                            goToShelf: (index) =>
-                            navigateToNextScreen(context,ShelfPage(index: index)),
+                            builder: (context,libTabIndex,child) =>
+                       TabBar(
+                              indicatorSize: TabBarIndicatorSize.label,
+                              labelColor: CREATE_BUTTON_COLOR,
+                              unselectedLabelColor: BOOK_EXTRA_DATA_CONTENT_COLOR,
+                            tabs: [
+                              Tab(child: Text(YOUR_BOOKS,
+                              style: TextStyle(
+                            fontSize: TEXT_SMALL_1X,
                           ),
-                        )
-                         ),
-                  )
-              ],
+                              ),),
+                              Tab(child: Text(SHELVES,
+                              style: TextStyle(
+                            fontSize: TEXT_SMALL_1X,
+                          ),
+                              ),),
+                            ],
+                            onTap: (index){
+                              LibraryTabBloc bloc = Provider.of(context,listen: false);
+                              bloc.libChooseTab(index);
+                            },
+                          ),
+                    ),
+                    ),
+                    Divider(color:SAMPLE_BACKGROUND_COLOR,),
+                    SizedBox(height: MARGIN_SMALL_1X,),
+                    Column(
+                    mainAxisSize: MainAxisSize.min,
+                      children: [ 
+                            // Builder(
+                            //   builder: (context) {
+                            //     return ElevatedButton(
+                            //       onPressed: (){
+                            //         LibraryTabBloc bloc = Provider.of(context,listen: false);
+                            //         bloc.deleteAllShelfsDatabase();
+                            //       }, 
+                            //       child: Text("delete all shelfs"),
+                            //       );
+                            //   }
+                            // ),
+                          Selector<LibraryTabBloc,int>(
+                            selector: (context,bloc) => bloc.libTabIndex,
+                            shouldRebuild: (previous,next) => previous != next,
+                            builder: (context,libTabIndex,child) {
+                             return Container(
+                            child: (libTabIndex == 0) ?
+                                  Selector<LibraryTabBloc,int>(
+                                    selector: (context,bloc) => bloc.gpValue,
+                                    shouldRebuild: (previous,next) => previous != next,
+                                    builder: (context,gpValue,child) =>
+                                    Selector<LibraryTabBloc,List<ChipVO>>(
+                                    selector: (context,bloc) => bloc.chips ?? [],
+                                    shouldRebuild: (previous,next) => previous != next,
+                                    builder: (context,chips,child) =>
+                                       Selector<LibraryTabBloc,List<String>>(
+                                    selector: (context,bloc) => bloc.currentBox,
+                                    shouldRebuild: (previous,next) => previous != next,
+                                    builder: (context,currentBox,child) =>
+                                      Selector<LibraryTabBloc,int>(
+                                            selector: (context,bloc) => bloc.sortStyle,
+                                             shouldRebuild: (previous,next) => previous != next,
+                                           builder: (context,sortStyle,child) =>
+                               Selector<LibraryTabBloc,List<BookVO>>(
+                                          selector: (context,bloc) => bloc.listForCarousel ?? [],
+                                        shouldRebuild: (previous,next) => previous != next,
+                                      builder: (context,listForCarousel,child) =>
+                                        (listForCarousel.isEmpty || listForCarousel == null) 
+                                        ?
+                                        Center(child: Text("Empty"),) 
+                                        :
+                                           YourBooksView(
+                                               chips: chips,
+                                               currentBox: currentBox,
+                                               gpValue: gpValue,
+                                               listForCarousel: listForCarousel,
+                                               sortStyle: sortStyle,
+                                              ChooseTab: (gpValue){
+                                                BtmSheet(
+                                                  context,
+                                                   gpValue,
+                                                  title: BTM_SHEET_TITLE,
+                                                  rd1Text: BTM_RD_1,
+                                                  rd2Text: BTM_RD_2,
+                                                  rd3Text: BTM_RD_3,
+                                                  rd1: (val){
+                                                    LibraryTabBloc _bloc = Provider.of(context,listen: false);
+                                                         _bloc.chooseSort(val).then((value) => Navigator.pop(context));
+                                                  },
+                                                  rd2: (val){
+                                                     LibraryTabBloc _bloc = Provider.of(context,listen: false);
+                                                            _bloc.chooseSort(val).then((value) => Navigator.pop(context));
+                                                  },
+                                                  rd3: (val){
+                                                     LibraryTabBloc _bloc = Provider.of(context,listen: false);
+                                                           _bloc.chooseSort(val).then((value) => Navigator.pop(context));
+                                                  }
+                                                 );
+                                              },
+                                              onChooseStyle: (sortStyle){
+                                                  BtmSheet(
+                                                    context,
+                                                     sortStyle,
+                                                      title: BTM_SHEET_SORT_TITLE,
+                                                       rd1Text: BTM_RD_SORT_1,
+                                                        rd2Text: BTM_RD_SORT_2,
+                                                         rd3Text: BTM_RD_SORT_3,
+                                                          rd1: (val){
+                                                    LibraryTabBloc _bloc = Provider.of(context,listen: false);
+                                                         _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
+                                                          },
+                                                           rd2: (val){
+                                                    LibraryTabBloc _bloc = Provider.of(context,listen: false);
+                                                         _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
+                                                           },
+                                                            rd3: (val){
+                                                    LibraryTabBloc _bloc = Provider.of(context,listen: false);
+                                                         _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
+                                                            }
+                                                            );
+                                              },
+                                              TapGenre: (index){
+                                                LibraryTabBloc _bloc = Provider.of(context,listen: false);
+                                                _bloc.TapFunction(index);
+                                              },
+                                              cancelGenre: (){
+                                                 LibraryTabBloc _bloc = Provider.of(context,listen: false);
+                                                _bloc.TapFunction(null);
+                                              },
+                                              tabBookInfoBtn: (index,book){
+                                                     BookOptionBtmSheet(context,index,book);
+                                              },
+                                              sheetFun: (index,book){
+                                                BookOptionBtmSheet(context,index, book);
+                                              },
+                                              onClick: (book){
+                                                // BookDetailBloc bloc = Provider.of(context,listen: false);
+                                                // bloc.tapFromYourBookViewToDetail(book).then((value){
+                                                //   navigateToNextScreen(context, BookDetailPage());
+                                                // });
+                                                navigateToNextScreen(context, BookDetailPage(
+                                                  book: book,
+                                                ));
+                                              },
+                                              ),
+                                            ),
+                                         ),
+                                      ),
+                                    )
+                                    )
+                                :
+                               Selector<LibraryTabBloc,List<ShelfVO>>(
+                                  selector: (context,bloc) => bloc.shelfs ?? [],
+                                  shouldRebuild: (previous,next) => previous != next,
+                                  builder: (context,shelfs,child) =>
+                                (shelfs.length < 1) ?
+                                Center(child: Text(EMPTY_TEXT),)
+                                :
+                                 ShelvesView(
+                                   shelfs: shelfs,
+                                   image: IMAGE_CONSTANT_ONLINE,
+                                    goToShelf: (index) =>
+                                    navigateToNextScreen(context,ShelfPage(userSelectIndex: index)),
+                                  ),
+                                )
+                               );
+                            },
+                          )
+                      ],
+                    ),
+                ],
+              ),
             ),
-        ],
+
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Selector<LibraryTabBloc,int>(
+              selector: (context,bloc) => bloc.libTabIndex,
+               shouldRebuild: (previous,next) => previous != next,
+              builder: (context,libTabIndex,child) =>
+              (libTabIndex == 1) ? GestureDetector(
+                onTap: (){
+                  navigateToNextScreen(context, CreateShelfPage());
+                },
+                child: Container(
+                    width: CREATE_SHELF_BUTTON__WIDTH,
+                    height: CREATE_SHELF_BUTTON_HEIGHT,
+                   decoration: BoxDecoration(
+                     borderRadius: BorderRadius.all(Radius.circular(22)),
+                     color: CREATE_BUTTON_COLOR,
+                   ),
+                   child: Center(child: ShelfCreateBtnTextView(),),
+                  ),
+              ) 
+                : Container()
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
@@ -249,7 +305,7 @@ class LibraryTab extends StatelessWidget {
                                                   isInSheet: true,
                                                title: BOOK_OPTION_ADDTOSHELF,
                                                 icon: Icon(Icons.add,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
-                                                onClick: () => print("todo"),
+                                                onClick: () =>  navigateToNextScreen(context, AddToShelfPage(userSelectBook: book)),
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(

@@ -24,9 +24,27 @@ class BookListForCarouselDaoImpl extends BookListForCarouselDao{
     return getUserTapBookListBox().values.toList();
   }
 
+  @override
+  BookVO? getUserTapSingleBook(String name) {
+    return getUserTapBookListBox().get(name);
+  }
+
    @override
   deleteBooksFromCarousel() {
     getUserTapBookListBox().clear();
+  }
+
+  @override
+  List<BookVO> getSelectedBook(List<String> currentBox){
+      List<BookVO> temp = [];
+      currentBox.forEach((outer) {
+        getUserTapBookList().forEach((inner) { 
+          if((inner.categoryForOverView ?? inner.listName ?? inner.searchResult?.volumeInfo?.categories?.first) == outer){
+              temp.add(inner);
+          }
+        });
+      });
+      return temp;
   }
 
 
@@ -51,11 +69,30 @@ class BookListForCarouselDaoImpl extends BookListForCarouselDao{
     return Stream.value(getUserTapBookList());
   }
 
+    
+
+  @override
+  BookVO? getUserTapSingleBookData(String name) {
+    if(getUserTapSingleBook(name) != null){
+      return getUserTapSingleBook(name);
+    }else{
+      print("empty single book");
+      return BookVO.empty();
+    }
+  }
+
+  @override
+  Stream<BookVO?> getUserTapSingleBookStream(String name) {
+    return Stream.value(getUserTapSingleBook(name));
+  }
+
   
 
   Box<BookVO> getUserTapBookListBox(){
     return Hive.box<BookVO>(BOX_NAME_BOOK_LIST_FOR_CAROUSEL);
   }
+
+
 
  
 

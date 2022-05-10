@@ -8,36 +8,34 @@ class BookDetailBloc extends ChangeNotifier{
   BookModel bookModel = BookModelImpl();
 
 BookVO? detailsInfo;
-List<BookVO>? listForCarousel;
 List<BookVO>? similarBooks;
-int order = 0;
+
+  BookDetailBloc(BookVO book){
+      tapForDetail(book);
+  }
 
 
-  Future<BookVO> tapForDetail(BookVO book,List<BookVO> list){
-        listForCarousel = list;
-        book.time = DateTime.now().toString();
+  Future<BookVO> tapForDetail(BookVO book){
         detailsInfo = book;
-         if(listForCarousel?.length != 0 && listForCarousel != null){
-         order = listForCarousel?.last.order ?? 0;
-        }
-        order++;
-        detailsInfo?.order = order;
-        print("List name check ==============> ${book}");
-        bookModel.searchBook(book.title ?? book.bookDetails?.first.title ?? book.searchResult?.volumeInfo?.title ?? "").then((value){
+        bookModel.searchBook(book.categoryForOverView ?? book.listName ?? book.searchResult?.volumeInfo?.categories?.first ?? "").then((value){
+          value.forEach((element) {
+            element.searchResult?.volumeInfo?.categories?.first == null;
+            element.searchResult?.volumeInfo?.categories?.first = book.categoryForOverView ?? book.listName ?? "";
+          });
           similarBooks = value;
+        print("Book Detail check in detail page bloc ===========> ${similarBooks}");
           notifyListeners();
         });
-        bookModel.putUserTapBook(detailsInfo?.title ?? detailsInfo?.searchResult?.volumeInfo?.title ?? detailsInfo?.bookDetails?.first.title ?? "",detailsInfo ?? BookVO.empty());
         notifyListeners();
-        print("Book Detail check ===========> ${book.title}");
         return Future.value(book);
     }
 
-
-    Future<BookVO> tapFromYourBookViewToDetail(BookVO book){
-      detailsInfo = book;
-      notifyListeners();
-      return Future.value(detailsInfo);
+     Future<BookVO> saveBookToCarousel(BookVO book){
+        book.time = DateTime.now().toString();
+        bookModel.putUserTapBook(book.title ?? book.searchResult?.volumeInfo?.title ?? book.bookDetails?.first.title ?? "",book);
+        notifyListeners();
+        print("Book Detail check ===========> ${book.title}");
+        return Future.value(book);
     }
 
 }

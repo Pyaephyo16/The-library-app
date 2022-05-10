@@ -16,23 +16,15 @@ class HomePageBloc extends ChangeNotifier{
 
 int currentIndex = 0;
 int tabIndex = 0;
-int libTabIndex = 0;
+
 
 
 List<BookListVO>? bookLists;
 ResultVO? results;
+List<BookVO>? listForCarousel;
 String date = DateFormat("yyyy-MM-dd").format(DateTime.now());
 
     HomePageBloc(){
-
-      ///OverView
-      // bookModel.overViewBooks(date).then((value){
-      //   bookLists = value;
-      //   notifyListeners();
-      //   print("bookList ==============> $bookLists");
-      // }).catchError((error){
-      //     print("Over View bloc section error");
-      // });
 
       ///OverView Database
       bookModel.overViewBooksDatabase(date).listen((event) {
@@ -44,23 +36,44 @@ String date = DateFormat("yyyy-MM-dd").format(DateTime.now());
          print("Over View bloc section database error");
       });
 
+        ///get List For carousel
+        bookModel.getUserTapBookDatabase().listen((event) {
+          listForCarousel = event;
+           listForCarousel?.sort(((a, b) => a.time!.compareTo(b.time ?? "") ));
+          notifyListeners();
+          print("User Tap Book List length Database ==============> ${listForCarousel?.length}");
+          print("User Tap Book List Database ==============> ${listForCarousel}");
+      }).onError((error){
+        print("User Tap Book list section database error");
+      });
+
     }
 
+     void deleteFromCarouselBook(){
+      bookModel.deleteBooksFromCarouselDatabase();
+    }  
 
-  libChooseTab(int index){
-      libTabIndex = index;
-      notifyListeners();
-  }
+
+
 
   userChooseTab(int index){
-      currentIndex = index;
-      libTabIndex = 0;
-      notifyListeners();
+    currentIndex = index;
+    notifyListeners();
   }
+
 
   userChooseBookTypeIndex(int index){
     tabIndex = index;
     notifyListeners();
   }
+
+
+  Future<BookVO> saveBookToCarousel(BookVO book){
+        book.time = DateTime.now().toString();
+        bookModel.putUserTapBook(book.title ?? book.searchResult?.volumeInfo?.title ?? book.bookDetails?.first.title ?? "",book);
+        notifyListeners();
+        print("Book Detail check ===========> ${book.title}");
+        return Future.value(book);
+    }
 
 }

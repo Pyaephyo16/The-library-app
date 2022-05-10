@@ -6,7 +6,7 @@ import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/book_detail_bloc.dart';
 import 'package:the_library_app/blocs/home_page_bloc.dart';
 import 'package:the_library_app/blocs/show_more_bloc.dart';
-import 'package:the_library_app/blocs/your_books_bloc.dart';
+import 'package:the_library_app/blocs/library_tab_bloc.dart';
 import 'package:the_library_app/data/vos/overview/book_list_vo.dart';
 import 'package:the_library_app/data/vos/overview/book_vo.dart';
 import 'package:the_library_app/data/vos/overview/result_vo.dart';
@@ -23,96 +23,96 @@ import 'package:the_library_app/widgets/rating_and_comment_section.dart';
 
 class BookDetailPage extends StatelessWidget {
 
+  final BookVO book;
+
+  BookDetailPage({
+    required this.book,
+  });
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: ListView(
-        children: [
-          AppBarView(),
-          SizedBox(height: MARGIN_MEDIUM_2X,),
-             Column(
-              children: [
-                Selector<BookDetailBloc,BookVO>(
-                  selector: (context,bloc) => bloc.detailsInfo ?? BookVO.empty(),
-                  shouldRebuild: (previous,next) => previous != next,
-                  builder: (context,detailsInfo,child) =>
-                   BookTitleAndCoverView(
-                      image: detailsInfo.bookImage ?? detailsInfo.searchResult?.volumeInfo?.imageLinks?.thumbnail  ?? IMAGE_CONSTANT_ONLINE,
-                      name:  detailsInfo.title ?? detailsInfo.bookDetails?.first.title ?? detailsInfo.searchResult?.volumeInfo?.title ?? "",
-                      content: detailsInfo.description ?? detailsInfo.searchResult?.volumeInfo?.description ?? detailsInfo.bookDetails?.first.description ?? "",
-                      author:  detailsInfo.author ?? detailsInfo.bookDetails?.first.author ?? "",
+    return 
+    ChangeNotifierProvider<BookDetailBloc>.value(
+      value: BookDetailBloc(book),
+      // ChangeNotifierProvider<BookDetailBloc>(
+      //   create: (context) => BookDetailBloc(book),
+      child: Scaffold(
+        body: ListView(
+          children: [
+            AppBarView(),
+            SizedBox(height: MARGIN_MEDIUM_2X,),
+               Column(
+                children: [
+                  Selector<BookDetailBloc,BookVO>(
+                    selector: (context,bloc) => bloc.detailsInfo ?? BookVO.empty(),
+                    shouldRebuild: (previous,next) => previous != next,
+                    builder: (context,detailsInfo,child) =>
+                     BookTitleAndCoverView(
+                        image: detailsInfo.bookImage ?? detailsInfo.searchResult?.volumeInfo?.imageLinks?.thumbnail  ?? IMAGE_CONSTANT_ONLINE,
+                        name:  detailsInfo.title ?? detailsInfo.bookDetails?.first.title ?? detailsInfo.searchResult?.volumeInfo?.title ?? "",
+                        content: detailsInfo.description ?? detailsInfo.searchResult?.volumeInfo?.description ?? detailsInfo.bookDetails?.first.description ?? "",
+                        author:  detailsInfo.author ?? detailsInfo.bookDetails?.first.author ?? "",
+                    ),
                   ),
-                ),
-                SizedBox(height: MARGIN_MEDIUM_3X,),
-                BookDetail(),
-                SizedBox(height: MARGIN_MEDIUM_3X,),
-                ButtonRowView(
-                  btn1Text: FREE_SAMPLE_DETAIL_BUTTON_TEXT,
-                  btn2Text: BUY_DETAIL_BUTTON_TEXT,
-                  btn1Click: (){},
-                  btn2Click: (){},
-                ),
-                SizedBox(height: MARGIN_MEDIUM_3X,),
-                SwitchButtonView(
-                  data: SWITCH_TO_AUDIO_DETAIL_TEXT,
-                ),
-                SizedBox(height: MARGIN_MEDIUM_2X,),
-                Padding(
-                  padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
-                  child: Divider(color: DETAIL_TEXT_COLOR,thickness: 1,),
-                ),
-                SizedBox(height: MARGIN_MEDIUM_2X,),
-                Selector<BookDetailBloc,BookVO>(
-                  selector: (context,bloc) => bloc.detailsInfo ?? BookVO.empty(),
-                  shouldRebuild: (previous,next) => previous != next,
-                  builder: (context,detailsInfo,child) =>
+                  SizedBox(height: MARGIN_MEDIUM_3X,),
+                  BookDetail(),
+                  SizedBox(height: MARGIN_MEDIUM_3X,),
+                  ButtonRowView(
+                    btn1Text: FREE_SAMPLE_DETAIL_BUTTON_TEXT,
+                    btn2Text: BUY_DETAIL_BUTTON_TEXT,
+                    btn1Click: (){},
+                    btn2Click: (){},
+                  ),
+                  SizedBox(height: MARGIN_MEDIUM_3X,),
+                  SwitchButtonView(
+                    data: SWITCH_TO_AUDIO_DETAIL_TEXT,
+                  ),
+                  SizedBox(height: MARGIN_MEDIUM_2X,),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: MARGIN_MEDIUM_2),
+                    child: Divider(color: DETAIL_TEXT_COLOR,thickness: 1,),
+                  ),
+                  SizedBox(height: MARGIN_MEDIUM_2X,),
+                  Selector<BookDetailBloc,BookVO>(
+                    selector: (context,bloc) => bloc.detailsInfo ?? BookVO.empty(),
+                    shouldRebuild: (previous,next) => previous != next,
+                    builder: (context,detailsInfo,child) =>
+                    AboutTheBookView(
+                      title: ABOUT_THIS_EBOOK_TEXT,
+                      content: detailsInfo.description ?? detailsInfo.searchResult?.volumeInfo?.description  ?? detailsInfo.bookDetails?.first.description ?? "",
+                    ),
+                  ),
+                  SizedBox(height: MARGIN_MEDIUM_2X,),
+                  RatingAndCommentsSection(),
+                  SizedBox(height: MARGIN_MEDIUM_2X,),
                   AboutTheBookView(
-                    title: ABOUT_THIS_EBOOK_TEXT,
-                    content: detailsInfo.description ?? detailsInfo.searchResult?.volumeInfo?.description  ?? detailsInfo.bookDetails?.first.description ?? "",
+                    title: ABOUT_THIS_AUTHOR_TEXT,
+                    content: AUTHOR_TEXT,
                   ),
-                ),
-                SizedBox(height: MARGIN_MEDIUM_2X,),
-                RatingAndCommentsSection(),
-                SizedBox(height: MARGIN_MEDIUM_2X,),
-                AboutTheBookView(
-                  title: ABOUT_THIS_AUTHOR_TEXT,
-                  content: AUTHOR_TEXT,
-                ),
-                SizedBox(height: MARGIN_MEDIUM_2X,),
-                 Selector<HomePageBloc,ResultVO>(
-                   selector: (context,bloc) => bloc.results ?? ResultVO.empty(),
-                    shouldRebuild: (previous,next) => previous != next,
-                    builder: (context,result,child) =>
-                   Selector<BookDetailBloc,List<BookVO>>(
-                    selector: (context,bloc) => bloc.similarBooks ?? [],
-                    shouldRebuild: (previous,next) => previous != next,
-                    builder: (context,similarBooks,child) =>
-                     Selector<YourBooksBloc,List<BookVO>>(
-                           selector: (context,bloc) => bloc.listForCarousel ?? [],
-                           shouldRebuild: (previous,next) => previous != next,
-                           builder: (context,listForCarousel,child) =>
-                       BookListTileAndSerialsView(
-                         isShowPrice: true,
-                        title: SIMILAR_BOOK_TEXT,
-                        books: similarBooks,
-                         onClick: (userSelectBookIndex,){
-                            BookDetailBloc _bloc = Provider.of(context,listen: false);
-                            _bloc.tapForDetail(similarBooks[userSelectBookIndex],listForCarousel).then((value) => navigateToNextScreen(context,BookDetailPage()),);
-                         }, 
-                        goToNext: (){
-                           ShowMoreBloc _bloc = Provider.of(context,listen: false);
-                            _bloc.clickForMoreView(0,result).then((value){
-                               navigateToNextScreen(context,BookListInGrid());
-                            });
-                        },
-                         ),
-                     ),
-                  ),
-                ),
-              ],
-            ),
-        ],
+                  SizedBox(height: MARGIN_MEDIUM_2X,),
+                     Selector<BookDetailBloc,List<BookVO>>(
+                      selector: (context,bloc) => bloc.similarBooks ?? [],
+                      shouldRebuild: (previous,next) => previous != next,
+                      builder: (context,similarBooks,child) =>
+                         BookListTileAndSerialsView(
+                           isShowPrice: true,
+                          title: SIMILAR_BOOK_TEXT,
+                          books: similarBooks.take(6).toList(),
+                           onClick: (userSelectBookIndex,){
+                             BookDetailBloc bloc = Provider.of(context,listen: false);
+                             bloc.saveBookToCarousel(similarBooks[userSelectBookIndex]).then((value) =>
+                            navigateToNextScreen(context,BookDetailPage(
+                               book: similarBooks[userSelectBookIndex],
+                              ))
+                             );
+                           }, 
+                          goToNext: (){},
+                           ),
+                    ),
+                ],
+              ),
+          ],
+        ),
       ),
     );
   }

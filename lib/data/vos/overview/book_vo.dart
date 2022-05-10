@@ -162,6 +162,9 @@ class BookVO {
 
   @HiveField(37)
   SearchResultVO? searchResult;
+
+  @HiveField(38)
+  String? categoryForOverView;
   
   BookVO({
     this.ageGroup,
@@ -202,7 +205,10 @@ class BookVO {
     this.order,
     this.numResults,
     this.searchResult,
+    this.categoryForOverView,
   });
+  
+
 
     BookVO.empty();
 
@@ -213,10 +219,9 @@ class BookVO {
 
 
 
-
   @override
   String toString() {
-    return 'BookVO(ageGroup: $ageGroup, amazonProductUrl: $amazonProductUrl, articleChapterLink: $articleChapterLink, author: $author, bookImage: $bookImage, bookImageWidth: $bookImageWidth, bookImageHeight: $bookImageHeight, bookReviewLink: $bookReviewLink, contributor: $contributor, contributorNote: $contributorNote, createdDate: $createdDate, description: $description, firstChapterLink: $firstChapterLink, price: $price, primaryIsbn10: $primaryIsbn10, primaryIsbn13: $primaryIsbn13, bookUri: $bookUri, publisher: $publisher, rank: $rank, rankLastWeek: $rankLastWeek, sundayReviewLink: $sundayReviewLink, title: $title, updatedDate: $updatedDate, weeksOnList: $weeksOnList, buyLinks: $buyLinks, listName: $listName, displayName: $displayName, bestsellersDate: $bestsellersDate, publishedDate: $publishedDate, asterisk: $asterisk, dagger: $dagger, isbns: $isbns, bookDetails: $bookDetails, reviews: $reviews, time: $time, order: $order, numResults: $numResults, searchResult: $searchResult)';
+    return 'BookVO(ageGroup: $ageGroup, amazonProductUrl: $amazonProductUrl, articleChapterLink: $articleChapterLink, author: $author, bookImage: $bookImage, bookImageWidth: $bookImageWidth, bookImageHeight: $bookImageHeight, bookReviewLink: $bookReviewLink, contributor: $contributor, contributorNote: $contributorNote, createdDate: $createdDate, description: $description, firstChapterLink: $firstChapterLink, price: $price, primaryIsbn10: $primaryIsbn10, primaryIsbn13: $primaryIsbn13, bookUri: $bookUri, publisher: $publisher, rank: $rank, rankLastWeek: $rankLastWeek, sundayReviewLink: $sundayReviewLink, title: $title, updatedDate: $updatedDate, weeksOnList: $weeksOnList, buyLinks: $buyLinks, listName: $listName, displayName: $displayName, bestsellersDate: $bestsellersDate, publishedDate: $publishedDate, asterisk: $asterisk, dagger: $dagger, isbns: $isbns, bookDetails: $bookDetails, reviews: $reviews, time: $time, order: $order, numResults: $numResults, searchResult: $searchResult, categoryForOverView: $categoryForOverView)';
   }
 
   @override
@@ -261,7 +266,8 @@ class BookVO {
       other.time == time &&
       other.order == order &&
       other.numResults == numResults &&
-      other.searchResult == searchResult;
+      other.searchResult == searchResult &&
+      other.categoryForOverView == categoryForOverView;
   }
 
   @override
@@ -303,6 +309,7 @@ class BookVO {
       time.hashCode ^
       order.hashCode ^
       numResults.hashCode ^
-      searchResult.hashCode;
+      searchResult.hashCode ^
+      categoryForOverView.hashCode;
   }
 }

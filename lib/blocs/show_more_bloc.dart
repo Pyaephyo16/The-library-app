@@ -17,7 +17,9 @@ class ShowMoreBloc extends ChangeNotifier{
   List<BookVO>? showMoreBooks;
 
 
-
+  ShowMoreBloc(int index,ResultVO result){
+    clickForMoreView(index, result);
+  }
 
 
     Future<String> clickForMoreView(int index,ResultVO result){
@@ -26,21 +28,11 @@ class ShowMoreBloc extends ChangeNotifier{
        bestSellerDate = result.bestsellersDate ?? "";
        publishedDate = result.publishedDate ?? "";
 
-      /// Show More
-    //  return bookModel.showMoreBooks(bookListName,offset.toString(),results?.bestsellersDate ?? "", results?.publishedDate ?? "").then((value){
-    //     showMoreBooks = value;
-    //     notifyListeners();
-    //     print("Show More database ==============> $showMoreBooks");
-    //     return Future.value();
-    //   }).catchError((error){
-    //      print("Show More bloc section database error");
-    //   });
-    
     ///Show More Database
      bookModel.showMoreBooksDatabase(bookListName ?? "",offset.toString(),result.bestsellersDate ?? "", result.publishedDate ?? "").listen((event) {
         showMoreBooks = event?.bookList ?? [];
         notifyListeners();
-        print("showMore books database ==============> ${showMoreBooks?.first.bookImage}");
+        print("showMore books database ==============> ${showMoreBooks}");
     }).onError((error){
        print("Show More bloc section database error");
     });
@@ -60,6 +52,15 @@ class ShowMoreBloc extends ChangeNotifier{
        print("Show More bloc section database error");
     });
       return Future.value(bookListName);
+    }
+
+  ///Save show more books to carousel
+     Future<BookVO> saveBookToCarousel(BookVO book){
+        book.time = DateTime.now().toString();
+        bookModel.putUserTapBook(book.title ?? book.searchResult?.volumeInfo?.title ?? book.bookDetails?.first.title ?? "",book);
+        notifyListeners();
+        print("Book Detail check ===========> ${book.title}");
+        return Future.value(book);
     }
 
 }

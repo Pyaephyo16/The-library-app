@@ -1,58 +1,27 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
+import 'package:the_library_app/data/models/book_model.dart';
+import 'package:the_library_app/data/models/book_model_impl.dart';
+import 'package:the_library_app/data/vos/overview/book_vo.dart';
+import 'package:the_library_app/data/vos/shelf_vo.dart';
 import 'package:the_library_app/dummy/dummy_data.dart';
 
 class CreateShelfPageBloc extends ChangeNotifier{
 
+  BookModel bookModel = BookModelImpl();
 
-List<ShelfVO> shelfsName = shelfs;
-int? length;
+
+String dateForId = DateTime.now().toString();
 
   Future<String> newShelf(String name){
-      ShelfVO data = ShelfVO(title: name, content: "5 books", isSelected: false);
-      List<ShelfVO> temp = [];
-      shelfsName.forEach((element){
-        temp.add(element);
-      });
-      temp.add(data);
-      shelfsName = temp;
+      ShelfVO data = ShelfVO(id: dateForId,shelfName: name,books: []);
+
+      //Create Shelf
+      bookModel.createNewShelf(data);
+
       notifyListeners();
-    return Future.value(shelfsName.last.title);
+    return Future.value(dateForId);
   }
-
-
-  // optionsForShelf(int? index){
-  //   if(index != null){
-  //       shelfOptionValue = index;
-  //       notifyListeners();
-  //   }
-  // }
-
-//  Future<String> renameShelfName(int index,String newName){
-
-//     List<ShelfVO> data = shelfsName.mapIndexed((int i,shelf){
-//           if(i == index){
-//             shelf.title = newName;
-//           }
-//           return shelf;
-//     }).toList();
-//     shelfsName = data;
-//       shelfOptionValue = null;
-//       notifyListeners();
-//       return Future.value(shelfsName[index].title);
-//   }
-
-  // Future<String> deleteShelf(int index){
-  //     List<ShelfVO> temp = [];
-  //     shelfsName.forEach((element) {
-  //       temp.add(element);
-  //     });
-  //     temp.removeAt(index);
-  //     shelfsName = temp;
-  //     notifyListeners();
-  //      return Future.value("");
-  // }
-
 
 
 }

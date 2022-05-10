@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/book_detail_bloc.dart';
 import 'package:the_library_app/blocs/home_page_bloc.dart';
 import 'package:the_library_app/blocs/show_more_bloc.dart';
-import 'package:the_library_app/blocs/your_books_bloc.dart';
+import 'package:the_library_app/blocs/library_tab_bloc.dart';
 import 'package:the_library_app/data/vos/overview/book_list_vo.dart';
 import 'package:the_library_app/data/vos/overview/book_vo.dart';
 import 'package:the_library_app/data/vos/overview/result_vo.dart';
@@ -15,6 +15,7 @@ import 'package:the_library_app/data/vos/show_more/show_more_result_vo.dart';
 import 'package:the_library_app/dummy/dummy_data.dart';
 import 'package:the_library_app/pages/Views/audiobook_view.dart';
 import 'package:the_library_app/pages/Views/ebooks_view.dart';
+import 'package:the_library_app/pages/add_to_shelf_page.dart';
 import 'package:the_library_app/pages/book_detail_page.dart';
 import 'package:the_library_app/pages/book_list_in_grid.dart';
 import 'package:the_library_app/resources/colors.dart';
@@ -31,111 +32,129 @@ class HomeTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.white,
-      //padding: EdgeInsets.only(top: MARGIN_MEDIUM_2),
-      child: ListView(
-        children: [
-          SizedBox(height: MARGIN_OVER),
-         Selector<YourBooksBloc,List<BookVO>>(
-           selector: (context,bloc) => bloc.listForCarousel ?? [],
-           shouldRebuild: (previous,next) => previous != next,
-           builder: (context,listForCarousel,child) =>
-           (listForCarousel.isEmpty || listForCarousel == null) 
-           ?
-           NoBookViewInCarousel(
-             title: NO_BOOKS_TEXT,
-           )
-           :
-            CarouselBookView(
-             bookListForCarousel: listForCarousel.reversed.toList(),
-             menuFun: (book){
-               BookOptionBtmSheet(context,book);
-             },
-           ),
-         ),
-          // SizedBox(height: MARGIN_FOR_CAROUSEL,),
-          // ElevatedButton(
-          //   onPressed: (){
-          //     YourBooksBloc _bloc = Provider.of(context,listen: false);
-          //     _bloc.deleteFromCarouselBook();
-          //   },
-          //  child: Text("Delete From Carousel"),
-          //  ),
-         SizedBox(height: MARGIN_FOR_CAROUSEL,),
-         DefaultTabController(
-           length: 2,
-            child: Selector<HomePageBloc,int>(
-              selector: (context,bloc) => bloc.tabIndex,
-              shouldRebuild: (previous,next) => previous != next,
-              builder: (context,tabIndex,child) =>
-               TabBar(
-                indicatorSize: TabBarIndicatorSize.label,
-                labelColor: CREATE_BUTTON_COLOR,
-                unselectedLabelColor: BOOK_EXTRA_DATA_CONTENT_COLOR,
-                onTap: (index){
-                  HomePageBloc _bloc = Provider.of(context,listen: false);
-                  _bloc.userChooseBookTypeIndex(index);
-                },
-                tabs: [
-                  Tab(child: Text(TAB_EBOOK,
-                  style: TextStyle(
-                    fontSize: TEXT_SMALL_1X,
-                  ),
-                  ),),
-                  Tab(child: Text(TAB_AUDIOBOOK,
-                  style: TextStyle(
-                    fontSize: TEXT_SMALL_1X,
-                  ),
-                  ),),
-              ],),
-            ),
-            ),
-            SizedBox(height: MARGIN_MEDIUM_2,),
-            Selector<HomePageBloc,int>(
-              selector: (context,bloc) => bloc.tabIndex,
-              shouldRebuild: (pre,next) => pre != next,
-              builder: (context,tabIndex,child) =>
-               Selector<HomePageBloc,ResultVO>(
-                 selector: (context,bloc) => bloc.results ?? ResultVO.empty(),
-                 shouldRebuild: (previous,next) => previous != next,
-                 builder: (context,result,child) =>
-                  Selector<YourBooksBloc,List<BookVO>>(
-           selector: (context,bloc) => bloc.listForCarousel ?? [],
-           shouldRebuild: (previous,next) => previous != next,
-           builder: (context,listForCarousel,child) =>
-                     Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: (tabIndex==0) ?
-                     EbooksView(
-                       bookList: result.lists ?? [],
-                       onClick: (book){
-                         BookDetailBloc _bloc = Provider.of(context,listen: false);
-                         _bloc.tapForDetail(book,listForCarousel).then((value){
-                          navigateToNextScreen(context,BookDetailPage());
-                         });
-                       },
-                        goToNext: (index){
-                          ShowMoreBloc _bloc = Provider.of(context,listen: false);
-                          _bloc.clickForMoreView(index,result).then((value){
-                             navigateToNextScreen(context,BookListInGrid());
-                          });
-                        },
-                     ) 
-                     : 
-                     AudioBooksView(
-                       onClick: (userSelectBookIndex) =>
-                          navigateToNextScreen(context,BookDetailPage()),
-                          goToNext: (){
-                          navigateToNextScreen(context,BookListInGrid());
-                        },
-                     ),
-                               ),
-                  ),
+    return
+     ChangeNotifierProvider<HomePageBloc>.value(
+      value: HomePageBloc(),
+      // ChangeNotifierProvider<HomePageBloc>(
+      //   create: (context) => HomePageBloc(),
+      child: Container(
+          color: Colors.white,
+          child: ListView(
+            children: [
+              SizedBox(height: MARGIN_OVER),
+             Selector<HomePageBloc,List<BookVO>>(
+               selector: (context,bloc) => bloc.listForCarousel ?? [],
+               shouldRebuild: (previous,next) => previous != next,
+               builder: (context,listForCarousel,child) =>
+               (listForCarousel.isEmpty || listForCarousel == null) 
+               ?
+               NoBookViewInCarousel(
+                 title: NO_BOOKS_TEXT,
+               )
+               :
+                CarouselBookView(
+                 bookListForCarousel: listForCarousel.reversed.toList(),
+                 menuFun: (book){
+                   BookOptionBtmSheet(context,book);
+                 },
                ),
-            )
-        ],
-      ),
+             ),
+              // SizedBox(height: MARGIN_FOR_CAROUSEL,),
+              // ElevatedButton(
+              //   onPressed: (){
+              //     HomePageBloc _bloc = Provider.of(context,listen: false);
+              //     _bloc.deleteFromCarouselBook();
+              //   },
+              //  child: Text("Delete From Carousel"),
+              //  ),
+             SizedBox(height: MARGIN_FOR_CAROUSEL,),
+             DefaultTabController(
+               length: 2,
+                child: Selector<HomePageBloc,int>(
+                  selector: (context,bloc) => bloc.tabIndex,
+                  shouldRebuild: (previous,next) => previous != next,
+                  builder: (context,tabIndex,child) =>
+                   TabBar(
+                    indicatorSize: TabBarIndicatorSize.label,
+                    labelColor: CREATE_BUTTON_COLOR,
+                    unselectedLabelColor: BOOK_EXTRA_DATA_CONTENT_COLOR,
+                    onTap: (index){
+                      HomePageBloc _bloc = Provider.of(context,listen: false);
+                      _bloc.userChooseBookTypeIndex(index);
+                    },
+                    tabs: [
+                      Tab(child: Text(TAB_EBOOK,
+                      style: TextStyle(
+                        fontSize: TEXT_SMALL_1X,
+                      ),
+                      ),),
+                      Tab(child: Text(TAB_AUDIOBOOK,
+                      style: TextStyle(
+                        fontSize: TEXT_SMALL_1X,
+                      ),
+                      ),),
+                  ],),
+                ),
+                ),
+                SizedBox(height: MARGIN_MEDIUM_2,),
+                Selector<HomePageBloc,int>(
+                  selector: (context,bloc) => bloc.tabIndex,
+                  shouldRebuild: (pre,next) => pre != next,
+                  builder: (context,tabIndex,child) =>
+                   Selector<HomePageBloc,ResultVO>(
+                     selector: (context,bloc) => bloc.results ?? ResultVO.empty(),
+                     shouldRebuild: (previous,next) => previous != next,
+                     builder: (context,result,child) =>
+                      Selector<HomePageBloc,List<BookVO>>(
+               selector: (context,bloc) => bloc.listForCarousel ?? [],
+               shouldRebuild: (previous,next) => previous != next,
+               builder: (context,listForCarousel,child) =>
+                         Container(
+                        width: MediaQuery.of(context).size.width,
+                        child: (tabIndex==0) ?
+                         EbooksView(
+                           bookList: result.lists ?? [],
+                           onClick: (book){
+                            //  BookDetailBloc _bloc = Provider.of(context,listen: false);
+                            //  _bloc.tapForDetail(book,listForCarousel).then((value){
+                            //   navigateToNextScreen(context,BookDetailPage());
+                            //  });
+                            HomePageBloc bloc = Provider.of(context,listen: false);
+                            bloc.saveBookToCarousel(book).then((value) => 
+                            navigateToNextScreen(context, BookDetailPage( book: book,)));
+                            
+                           },
+                            goToNext: (index){
+                              // ShowMoreBloc _bloc = Provider.of(context,listen: false);
+                              // _bloc.clickForMoreView(index,result).then((value){
+                              //    navigateToNextScreen(context,BookListInGrid());
+                              // });
+                              navigateToNextScreen(context,BookListInGrid(
+                                index: index,
+                                result: result,
+                              ));
+                            },
+                         ) 
+                         : 
+                         AudioBooksView(
+                           onClick: (userSelectBookIndex) =>
+                              navigateToNextScreen(context,BookDetailPage(
+                                book: BookVO.empty(),
+                              )),
+                              goToNext: (){
+                              navigateToNextScreen(context,BookListInGrid(
+                                index: 0,
+                                result: ResultVO.empty(),
+                              ));
+                            },
+                         ),
+                                   ),
+                      ),
+                   ),
+                )
+            ],
+          ),
+        ),
     );
   }
 
@@ -192,7 +211,7 @@ class HomeTab extends StatelessWidget {
                                                   isInSheet: true,
                                                title: BOOK_OPTION_ADDTOSHELF,
                                                 icon: Icon(Icons.add,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
-                                                onClick: () => print("todo"),
+                                                onClick: () => navigateToNextScreen(context, AddToShelfPage(userSelectBook: book)),
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(

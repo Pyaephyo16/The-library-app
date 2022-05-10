@@ -1,6 +1,9 @@
 import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:provider/provider.dart';
+import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/data/vos/chip_vo.dart';
 import 'package:the_library_app/data/vos/overview/book_vo.dart';
 import 'package:the_library_app/dummy/dummy_data.dart';
 import 'package:the_library_app/pages/tabs/library_tab.dart';
@@ -16,6 +19,7 @@ import 'package:the_library_app/view_items/option_button_view.dart';
 class YourBooksView extends StatelessWidget {
 
   final List<ChipVO> chips;
+  final List<String> currentBox;
   final List<BookVO> listForCarousel;
   final int gpValue;
   final int sortStyle;
@@ -29,6 +33,7 @@ class YourBooksView extends StatelessWidget {
 
   YourBooksView({
     required this.chips,
+    required this.currentBox,
     required this.gpValue,
     required this.listForCarousel,
     required this.sortStyle,
@@ -43,6 +48,12 @@ class YourBooksView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
+// WidgetsBinding.instance?.addPostFrameCallback((_){
+//       HomePageBloc bloc = Provider.of(context,listen: false);
+//      bloc.yourbookOrLib(0);
+//     });
+
     return 
         ListView(
           shrinkWrap: true,
@@ -52,6 +63,7 @@ class YourBooksView extends StatelessWidget {
           ChipSection(
             cancelGenre: cancelGenre,
              chips: chips, 
+             currentBox: currentBox,
              TapGenre: TapGenre,
              ),
         SizedBox(height: MARGIN_SMALL_1X,),
@@ -123,11 +135,13 @@ class ChipSection extends StatelessWidget {
     Key? key,
     required this.cancelGenre,
     required this.chips,
+    required this.currentBox,
     required this.TapGenre,
   }) : super(key: key);
 
   final Function cancelGenre;
   final List<ChipVO> chips;
+  final List<String> currentBox;
   final Function(int p1) TapGenre;
 
   @override
@@ -139,29 +153,44 @@ class ChipSection extends StatelessWidget {
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
-          GestureDetector(
-            onTap: (){
-              cancelGenre();
-            },
-            child: Container(
-              width: GENRE_ALL_CANCEL_BTN_CONTAINER_WIDTH,
-              height: GENRE_ALL_CANCEL_BTN_CONTAINER_HEIGHT,
-            margin: EdgeInsets.only(left: MARGIN_PRE_SMALL,top: MARGIN_PRE_SMALL,bottom: MARGIN_PRE_SMALL),
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(MARGIN_FOR_CANCEL_GENRE),
-                border: Border.all(color: BTM_SHEET_OPTION_ICON_COLOR),
-              ),
-              child:Center(child: FaIcon(FontAwesomeIcons.xmark,color: BTM_SHEET_OPTION_ICON_COLOR,size: MARGIN_MEDIUM_2X,)),
-            ),
-          ),
+        (currentBox.length != 0) ?  CancelGenreButton(cancelGenre: cancelGenre) : Container(),
           ...chips.mapIndexed((index,type){
-            return ChipView(
+            return 
+            ChipView(
               index: index,
               type: type,
               TapGenre: (index) => TapGenre(index),
             );
           }),
         ],
+      ),
+    );
+  }
+}
+
+class CancelGenreButton extends StatelessWidget {
+  const CancelGenreButton({
+    Key? key,
+    required this.cancelGenre,
+  }) : super(key: key);
+
+  final Function cancelGenre;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: (){
+        cancelGenre();
+      },
+      child: Container(
+        width: GENRE_ALL_CANCEL_BTN_CONTAINER_WIDTH,
+        height: GENRE_ALL_CANCEL_BTN_CONTAINER_HEIGHT,
+      margin: EdgeInsets.only(left: MARGIN_PRE_SMALL,top: MARGIN_PRE_SMALL,bottom: MARGIN_PRE_SMALL),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(MARGIN_FOR_CANCEL_GENRE),
+          border: Border.all(color: BTM_SHEET_OPTION_ICON_COLOR),
+        ),
+        child:Center(child: FaIcon(FontAwesomeIcons.xmark,color: BTM_SHEET_OPTION_ICON_COLOR,size: MARGIN_MEDIUM_2X,)),
       ),
     );
   }
@@ -184,7 +213,7 @@ class ChipView extends StatelessWidget {
       child: Container(
         margin: EdgeInsets.symmetric(horizontal: MARGIN_PRE_SMALL),
         child: Chip(
-          label: Text(type.title ?? "",
+          label: Text(type.category ?? "",
           style: TextStyle(
             color: (type.isSelected == true) ? Colors.white : BTM_SHEET_OPTION_ICON_COLOR,
           ),
@@ -219,7 +248,6 @@ class ListAndGridShowSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      //padding: EdgeInsets.symmetric(horizontal: MARGIN_SMALL),
       child: (sortStyle == 1) ?
         ListView.builder(
           physics: NeverScrollableScrollPhysics(),
@@ -291,7 +319,7 @@ class BookInLibListView extends StatelessWidget {
         onClick(books);
       },
       child: Container(
-        margin: EdgeInsets.only(bottom: MARGIN_MEDIUM),
+        margin: EdgeInsets.only(bottom: MARGIN_MEDIUM,left: MARGIN_SMALL,right: MARGIN_SMALL),
         child: Row(
           children: [
             BookNameAndInfoView(

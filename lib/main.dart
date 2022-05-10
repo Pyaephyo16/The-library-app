@@ -7,7 +7,7 @@ import 'package:the_library_app/blocs/home_page_bloc.dart';
 import 'package:the_library_app/blocs/search_page_bloc.dart';
 import 'package:the_library_app/blocs/shelf_bloc.dart';
 import 'package:the_library_app/blocs/show_more_bloc.dart';
-import 'package:the_library_app/blocs/your_books_bloc.dart';
+import 'package:the_library_app/blocs/library_tab_bloc.dart';
 import 'package:the_library_app/data/vos/google_search/access_info_vo.dart';
 import 'package:the_library_app/data/vos/google_search/epub_vo.dart';
 import 'package:the_library_app/data/vos/google_search/image_links_vo.dart';
@@ -24,6 +24,7 @@ import 'package:the_library_app/data/vos/overview/book_vo.dart';
 import 'package:the_library_app/data/vos/overview/buy_link_vo.dart';
 import 'package:the_library_app/data/vos/overview/result_vo.dart';
 import 'package:the_library_app/data/vos/overview/show_more_list_for_hive_vo.dart';
+import 'package:the_library_app/data/vos/shelf_vo.dart';
 import 'package:the_library_app/data/vos/show_more/book_details_vo.dart';
 import 'package:the_library_app/data/vos/show_more/isbns_vo.dart';
 import 'package:the_library_app/data/vos/show_more/reviews_vo.dart';
@@ -56,10 +57,12 @@ void main() async{
   Hive.registerAdapter(SearchInfoVOAdapter());
   Hive.registerAdapter(SearchResultVOAdapter());
   Hive.registerAdapter(VolumeInfoVOAdapter());
+  Hive.registerAdapter(ShelfVOAdapter());
 
   await Hive.openBox<ResultVO>(BOX_NAME_RESULT_VO);
   await Hive.openBox<ShowMoreListForHiveVO>(BOX_NAME_SHOW_MORE_LIST_FOR_HIVE_VO);
   await Hive.openBox<BookVO>(BOX_NAME_BOOK_LIST_FOR_CAROUSEL);
+  await Hive.openBox<ShelfVO>(BOX_NAME_SHELF_VO);
 
   runApp(
     MyApp(),
@@ -70,21 +73,26 @@ class MyApp extends StatelessWidget{
 
   @override
   Widget build(BuildContext context) {
-    return MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (context) => CreateShelfPageBloc()),
-        ChangeNotifierProvider(create: (context) => HomePageBloc()),
-        ChangeNotifierProvider(create: (context) => SearchPageBloc()),
-        ChangeNotifierProvider(create: (context) => BookDetailBloc()),
-        ChangeNotifierProvider(create: (context) => ShowMoreBloc()),
-        ChangeNotifierProvider(create: (context) => YourBooksBloc()),
-        ChangeNotifierProvider(create: (context) => ShelfBloc()),
-      ],
-      child: MaterialApp(
+    return
+    // MultiProvider(
+    //   providers: [
+    //     ChangeNotifierProvider(create: (context) => CreateShelfPageBloc()),
+    //     ChangeNotifierProvider(create: (context) => HomePageBloc()),
+    //     ChangeNotifierProvider(create: (context) => SearchPageBloc()),
+    //     ChangeNotifierProvider(create: (context) => BookDetailBloc()),
+    //     ChangeNotifierProvider(create: (context) => ShowMoreBloc()),
+    //     ChangeNotifierProvider(create: (context) => LibraryTabBloc()),
+    //     ChangeNotifierProvider(create: (context) => ShelfBloc()),
+    //   ],
+    //   child: MaterialApp(
+    //     debugShowCheckedModeBanner: false,
+    //     home: HomePage(),
+    //   ),
+    // );
+    MaterialApp(
         debugShowCheckedModeBanner: false,
         home: HomePage(),
-      ),
-    );
+      );
   }
 }
 

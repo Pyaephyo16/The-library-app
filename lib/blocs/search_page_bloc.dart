@@ -13,9 +13,12 @@ class SearchPageBloc extends ChangeNotifier{
 List<BookVO> filterList = [];
 int optionNumber = 0;
 Map<String,List<BookVO>>? data;
+String? name;
+
 
 
   Future<String> searchFun(String str,bool isSubmit){
+      name = str;
       if(str.isEmpty){
         optionNumber = 0;
         notifyListeners();
@@ -43,6 +46,18 @@ Map<String,List<BookVO>>? data;
        notifyListeners();
     return Future.value("sth");
   }
+
+
+  Future<BookVO> saveBookToCarousel(BookVO book){
+        book.time = DateTime.now().toString();
+        if(book.searchResult?.volumeInfo?.categories?.first == null){
+            book.searchResult?.volumeInfo?.categories?.first = name ?? "";
+        }
+        bookModel.putUserTapBook(book.title ?? book.searchResult?.volumeInfo?.title ?? book.bookDetails?.first.title ?? "",book);
+        notifyListeners();
+        print("Book Detail check ===========> ${book.title}");
+        return Future.value(book);
+    }
 
 
 }
