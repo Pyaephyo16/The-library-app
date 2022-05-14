@@ -17,7 +17,12 @@ class ShowMoreBloc extends ChangeNotifier{
   List<BookVO>? showMoreBooks;
 
 
-  ShowMoreBloc(int index,ResultVO result){
+  ShowMoreBloc(int index,ResultVO result,{BookModel? model}){
+
+    if(model != null){
+      bookModel = model;
+    }
+
     clickForMoreView(index, result);
   }
 

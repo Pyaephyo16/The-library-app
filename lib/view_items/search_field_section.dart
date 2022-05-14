@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:the_library_app/resources/colors.dart';
 import 'package:the_library_app/resources/constants.dart';
 import 'package:the_library_app/resources/dimens.dart';
@@ -6,6 +7,7 @@ import 'package:the_library_app/view_items/user_profile_view.dart';
 
 class SearchFieldSection extends StatelessWidget {
   
+    final Key key;
     final bool isSearchPage;
     final Function prefixTouch;
     final Icon icon;
@@ -14,6 +16,7 @@ class SearchFieldSection extends StatelessWidget {
     final Function(String) submittedFun;
 
     SearchFieldSection({
+      required this.key,
       required this.isSearchPage,
       required this.prefixTouch,
       required this.icon,
@@ -25,6 +28,8 @@ class SearchFieldSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextFormField(
+        key: Key("SearchBookKey"),
+        textInputAction: TextInputAction.search,
       controller: searchText,
       onFieldSubmitted: (str){
           submittedFun(str);

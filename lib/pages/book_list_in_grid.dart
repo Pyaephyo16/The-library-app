@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/book_detail_bloc.dart';
-import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/blocs/home_tab_bloc.dart';
 import 'package:the_library_app/blocs/search_page_bloc.dart';
 import 'package:the_library_app/blocs/show_more_bloc.dart';
 import 'package:the_library_app/blocs/library_tab_bloc.dart';
@@ -46,6 +46,7 @@ class BookListInGrid extends StatelessWidget {
                 shouldRebuild: (previous,next) => previous != next,
                 builder: (context,showMoreBooks,child) =>
                 BookListTitleView(
+                    indexO: -1,
                     title: (showMoreBooks == null || showMoreBooks.isEmpty) ? "" : showMoreBooks.first.listName ?? "",
                     padd: MARGIN_SMALL,
                     isListFromHome: true,
@@ -67,6 +68,7 @@ class BookListInGrid extends StatelessWidget {
                             numResult: showMoreBooks.first.numResults ?? 0,
                             itemBuilder: (context,index){
                             return BookView(
+                              key: Key("ShowMoreBook$index"),
                               isShowPrice: true,
                               isInShelf: false,
                               sheetFun: (){},

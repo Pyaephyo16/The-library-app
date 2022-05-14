@@ -9,6 +9,7 @@ import 'package:the_library_app/view_items/ellipis_icon_view.dart';
 class BookView extends StatelessWidget {
 
   final String name;
+  final Key key;
   final String price;
   final String author;
   final String image;
@@ -23,6 +24,7 @@ class BookView extends StatelessWidget {
 
   BookView({
     required this.name,
+    required this.key,
     required this.price,
     required this.author,
     required this.isShowPrice,
@@ -46,7 +48,7 @@ class BookView extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: MARGIN_PRE_SMALL),
         child: Container(
           width: bookWidth,
-          height: bookHeight,
+        height: 300,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -161,6 +163,7 @@ class BookCoverImageView extends StatelessWidget {
                 child: Visibility(
                   visible: isINShelf,
                   child: EllipisIconView(
+                    key: Key("YourBooksListInGridEllipisKey"),
                     color: Colors.white,
                      tabBookInfoBtn: (){
                         sheetFun();

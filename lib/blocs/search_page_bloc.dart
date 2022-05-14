@@ -16,6 +16,12 @@ Map<String,List<BookVO>>? data;
 String? name;
 
 
+  SearchPageBloc({BookModel? model}){
+    if(model != null){
+      bookModel = model;
+    }
+  }
+
 
   Future<String> searchFun(String str,bool isSubmit){
       name = str;
@@ -33,12 +39,14 @@ String? name;
       }
 
      if(str!=null && str.isNotEmpty){
+       print("Enter in it");
     List<BookVO> temp = [];
       bookModel.searchBook(str).then((value){
-         temp = value.where((element){
-             return element.searchResult?.volumeInfo?.title.toString().toLowerCase().contains(str.toLowerCase()) ?? false;
-              }).toList();
-              filterList = temp;
+        //  temp = value.where((element){
+        //      return element.searchResult?.volumeInfo?.title.toString().toLowerCase().contains(str.toLowerCase()) ?? false;
+        //       }).toList();
+              //filterList = temp;
+              filterList = value;
          notifyListeners();
          print("filter list =============> ${filterList}");
       });

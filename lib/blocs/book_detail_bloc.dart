@@ -10,7 +10,12 @@ class BookDetailBloc extends ChangeNotifier{
 BookVO? detailsInfo;
 List<BookVO>? similarBooks;
 
-  BookDetailBloc(BookVO book){
+  BookDetailBloc(BookVO book,{BookModel? model}){
+
+    if(model != null){
+      bookModel = model;
+    }
+
       tapForDetail(book);
   }
 
@@ -19,11 +24,12 @@ List<BookVO>? similarBooks;
         detailsInfo = book;
         bookModel.searchBook(book.categoryForOverView ?? book.listName ?? book.searchResult?.volumeInfo?.categories?.first ?? "").then((value){
           value.forEach((element) {
-            element.searchResult?.volumeInfo?.categories?.first == null;
+            if(element.searchResult?.volumeInfo?.categories?.first == null){
             element.searchResult?.volumeInfo?.categories?.first = book.categoryForOverView ?? book.listName ?? "";
+            }
           });
           similarBooks = value;
-        print("Book Detail check in detail page bloc ===========> ${similarBooks}");
+        //print("Book Detail check in detail page bloc ===========> ${similarBooks}");
           notifyListeners();
         });
         notifyListeners();

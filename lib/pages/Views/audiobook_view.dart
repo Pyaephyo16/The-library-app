@@ -18,7 +18,9 @@ class AudioBooksView extends StatelessWidget {
        mainAxisSize: MainAxisSize.min,
       children: [
         BookListTileAndSerialsView(
+          key: Key("EbookListOneTitleAndSerial"),
           books: [],
+          indexO: -2,
           isShowPrice: true,
           title: AUDIOBOOK_LIST_TITLE_1,
           onClick: (userSelectBookIndex) => onClick(userSelectBookIndex),
@@ -27,7 +29,9 @@ class AudioBooksView extends StatelessWidget {
           },
           ),
           BookListTileAndSerialsView(
+             key: Key("EbookListTwoTitleAndSerial"),
             books: [],
+            indexO: -2,
             isShowPrice: true,
           title: AUDIOBOOK_LIST_TITLE_2,
           onClick: (userSelectBookIndex) => onClick(userSelectBookIndex),
@@ -36,7 +40,9 @@ class AudioBooksView extends StatelessWidget {
           },
           ),
           BookListTileAndSerialsView(
+             key: Key("EbookListThreeTitleAndSerial"),
             books: [],
+            indexO: -2,
             isShowPrice: true,
           title: AUDIOBOOK_LIST_TITLE_3,
           onClick: (userSelectBookIndex) => onClick(userSelectBookIndex),

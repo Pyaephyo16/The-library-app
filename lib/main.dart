@@ -3,7 +3,7 @@ import 'package:hive/hive.dart';
 import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/book_detail_bloc.dart';
 import 'package:the_library_app/blocs/crate_shelf_page_bloc.dart';
-import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/blocs/home_tab_bloc.dart';
 import 'package:the_library_app/blocs/search_page_bloc.dart';
 import 'package:the_library_app/blocs/shelf_bloc.dart';
 import 'package:the_library_app/blocs/show_more_bloc.dart';

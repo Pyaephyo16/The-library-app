@@ -24,10 +24,10 @@ class BookListForCarouselDaoImpl extends BookListForCarouselDao{
     return getUserTapBookListBox().values.toList();
   }
 
-  @override
-  BookVO? getUserTapSingleBook(String name) {
-    return getUserTapBookListBox().get(name);
-  }
+  // @override
+  // BookVO? getUserTapSingleBook(String name) {
+  //   return getUserTapBookListBox().get(name);
+  // }
 
    @override
   deleteBooksFromCarousel() {
@@ -71,20 +71,20 @@ class BookListForCarouselDaoImpl extends BookListForCarouselDao{
 
     
 
-  @override
-  BookVO? getUserTapSingleBookData(String name) {
-    if(getUserTapSingleBook(name) != null){
-      return getUserTapSingleBook(name);
-    }else{
-      print("empty single book");
-      return BookVO.empty();
-    }
-  }
+  // @override
+  // BookVO? getUserTapSingleBookData(String name) {
+  //   if(getUserTapSingleBook(name) != null){
+  //     return getUserTapSingleBook(name);
+  //   }else{
+  //     print("empty single book");
+  //     return BookVO.empty();
+  //   }
+  // }
 
-  @override
-  Stream<BookVO?> getUserTapSingleBookStream(String name) {
-    return Stream.value(getUserTapSingleBook(name));
-  }
+  // @override
+  // Stream<BookVO?> getUserTapSingleBookStream(String name) {
+  //   return Stream.value(getUserTapSingleBook(name));
+  // }
 
   
 

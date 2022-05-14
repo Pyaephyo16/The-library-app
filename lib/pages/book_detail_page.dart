@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/book_detail_bloc.dart';
-import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/blocs/home_tab_bloc.dart';
 import 'package:the_library_app/blocs/show_more_bloc.dart';
 import 'package:the_library_app/blocs/library_tab_bloc.dart';
 import 'package:the_library_app/data/vos/overview/book_list_vo.dart';
@@ -39,7 +39,9 @@ class BookDetailPage extends StatelessWidget {
       child: Scaffold(
         body: ListView(
           children: [
-            AppBarView(),
+            AppBarView(
+              popIconKey: Key("detailPagePopIconKey"),
+            ),
             SizedBox(height: MARGIN_MEDIUM_2X,),
                Column(
                 children: [
@@ -95,7 +97,9 @@ class BookDetailPage extends StatelessWidget {
                       shouldRebuild: (previous,next) => previous != next,
                       builder: (context,similarBooks,child) =>
                          BookListTileAndSerialsView(
+                           key: Key("detailPageBookListTitleAndSerial"),
                            isShowPrice: true,
+                           indexO: -1,
                           title: SIMILAR_BOOK_TEXT,
                           books: similarBooks.take(6).toList(),
                            onClick: (userSelectBookIndex,){
@@ -143,6 +147,7 @@ class AboutTheBookView extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           BookListTitleView(
+            indexO: -2,
             title: title,
             padd: 0,
             isListFromHome: false,
@@ -209,12 +214,14 @@ class ButtonRowView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           ButtonView(
+            key: Key("BookDetailGhostButtonKey"),
             isGhostButton: true,
             title: btn1Text,
             bgColor: Colors.white,
             onClick: () => btn1Click(),
           ),
           ButtonView(
+            key: Key("BookDetailButtonKey"),
             isGhostButton: false,
             title: btn2Text,
             bgColor: CREATE_BUTTON_COLOR,
@@ -228,12 +235,14 @@ class ButtonRowView extends StatelessWidget {
 
 class ButtonView extends StatelessWidget {
   
+  final Key key;
   final bool isGhostButton;
   final String title;
   final Color bgColor;
   final Function onClick;
 
   ButtonView({
+    required this.key,
     required this.isGhostButton,
     required this.title,
     required this.bgColor,
@@ -466,6 +475,12 @@ class BookTitleAndCoverView extends StatelessWidget {
 
 class AppBarView extends StatelessWidget {
 
+    final Key popIconKey;
+
+    AppBarView({
+      required this.popIconKey,
+    });
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -474,6 +489,7 @@ class AppBarView extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
           IconButton(
+            key: popIconKey,
             onPressed: (){
             Navigator.of(context).pop();
           },

@@ -7,7 +7,7 @@ abstract class ShelfListDao{
   List<ShelfVO> getAllShelfs();
   List<BookVO> getSelectedShelf(List<String> currentBox,int shelfIndex);
   void deleteSingleShelf(String id);
-  void deleteAllShelfs();
+  //void deleteAllShelfs();
   Stream<void> shelfsEventStream();
   List<ShelfVO> getAllShelfsData();
   Stream<List<ShelfVO>> getAllShelfsStream();

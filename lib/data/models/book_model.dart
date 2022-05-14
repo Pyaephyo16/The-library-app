@@ -25,9 +25,9 @@ abstract class BookModel{
   Stream<List<ShelfVO>> getAllShelfsDatabase();
   //Stream<ShelfVO?> getSingleShelfDatabase(String id);
   void deleteSingleShelfDatabase(String id);
-  void deleteAllShelfsDatabase();
+  //void deleteAllShelfsDatabase();
 
   List<ShelfVO> getAllShelfDb();
-  Stream<BookVO?> getUserTapSingleBookDatabase(String name);
+  //Stream<BookVO?> getUserTapSingleBookDatabase(String name);
 
 }

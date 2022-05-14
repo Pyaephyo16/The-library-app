@@ -23,7 +23,9 @@ class EbooksView extends StatelessWidget {
       itemCount: bookList.length,
       itemBuilder: (BuildContext context,int indexO){
         return BookListTileAndSerialsView(
+          key: Key("EbookListTitleAndSerial"),
           isShowPrice: true,
+          indexO: indexO,
           title: bookList[indexO].listName ?? "",
           books: bookList[indexO].books ?? [],
            onClick: (userSelectBookIndex){

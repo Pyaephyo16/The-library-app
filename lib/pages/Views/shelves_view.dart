@@ -1,7 +1,8 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/blocs/home_tab_bloc.dart';
 import 'package:the_library_app/data/vos/shelf_vo.dart';
 import 'package:the_library_app/dummy/dummy_data.dart';
 import 'package:the_library_app/pages/book_list_in_grid.dart';
@@ -42,6 +43,7 @@ class ShelvesView extends StatelessWidget {
          itemBuilder: (BuildContext context,int index){
            return 
             ShelfView(
+            key: Key("ShelvesViewShelf$index"),
              index: index,
              image:  (shelfs[index].books?.length != 0) ? shelfs[index].books?.first.bookImage ?? shelfs[index].books?.first.searchResult?.volumeInfo?.imageLinks?.thumbnail ?? IMAGE_CONSTANT_ONLINE : IMAGE_CONSTANT_ONLINE,
              goToShelf: (index)=> goToShelf(index),
@@ -110,15 +112,16 @@ class ShelfCreateBtnTextView extends StatelessWidget {
 
 class ShelfView extends StatelessWidget {
   const ShelfView({
-    Key? key,
+    required this.key,
     required this.index,
     required this.goToShelf,
     required this.title,
     required this.book,
     required this.image,
     required this.isInAddToShelf,
-  }) : super(key: key);
+  });
 
+  final Key key;
   final int index;
   final Function goToShelf;
   final String title;
@@ -128,38 +131,82 @@ class ShelfView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    // return GestureDetector(
+    //   onTap: (){
+    //     goToShelf(index);
+    //   },
+    //   child: Column(
+    //     children: [
+    //       Row(
+    //         children: [
+    //           BookNameAndInfoView(
+    //             onClick: (){
+    //               goToShelf(index);
+    //             },
+    //             isSheet: false,
+    //             title: title,
+    //             image: image,
+    //             content: "$book books",
+    //             isInShelf: false,
+    //             ),
+    //           Spacer(),
+    //           Visibility(
+    //             visible: !isInAddToShelf,
+    //             child: IconButton(
+    //               onPressed: (){
+    //                 goToShelf(index);
+    //             }, 
+    //             icon: Icon(Icons.chevron_right,size: MARGIN_MEDIUM_4,),
+    //             ),
+    //           ),
+    //         ],
+    //       ),
+    //     ],
+    //   ),
+    // );
+    return ListTile(
       onTap: (){
         goToShelf(index);
       },
-      child: Column(
-        children: [
-          Row(
-            children: [
-              BookNameAndInfoView(
-                onClick: (){
-                  goToShelf(index);
-                },
-                isSheet: false,
-                title: title,
-                image: image,
-                content: "$book books",
-                isInShelf: false,
-                ),
-              Spacer(),
-              Visibility(
+      leading: Container(
+        width: 76,
+        height: 140,
+        child: CachedNetworkImage(
+          imageUrl: image,
+          fit: BoxFit.cover,
+          progressIndicatorBuilder: (context, url, downloadProgress) => 
+                  Center(child: CircularProgressIndicator(value: downloadProgress.progress)),
+          errorWidget: (context, url, error) => Image.asset("./asset/image/no_book.png",fit: BoxFit.cover,),
+                   ),
+      ),
+      title: Text(title,
+             maxLines: 2,
+             overflow: TextOverflow.ellipsis,
+             style: TextStyle(
+               //fontSize: (isInShelf == true) ? TEXT_MEDIUM : TEXT_SMALL_1X,
+               fontSize: TEXT_MEDIUM_2,
+               fontWeight: FontWeight.w400,
+               color: BTM_SHEET_OPTION_TEXT_COLOR,
+             ),
+             ),
+             subtitle: Text("$book books",
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            style: TextStyle(
+              //fontSize: (isInShelf == true) ? TEXT_MEDIUM : TEXT_SMALL_1X,
+              fontSize: TEXT_SMALL_1X,
+              fontWeight: FontWeight.w400,
+            ),
+            ),
+      trailing:  Visibility(
                 visible: !isInAddToShelf,
-                child: IconButton(
-                  onPressed: (){
-                    goToShelf(index);
-                }, 
+               child: IconButton(
+                 onPressed: (){
+                  goToShelf(index);
+               }, 
                 icon: Icon(Icons.chevron_right,size: MARGIN_MEDIUM_4,),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+      ),    
     );
   }
 }

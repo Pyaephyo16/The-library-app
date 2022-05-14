@@ -17,6 +17,7 @@ class RatingAndCommentsSection extends StatelessWidget {
     return Column(
       children: [
         BookListTitleView(
+          indexO: -3,
             title: "Ratings and reviews",
             padd: MARGIN_MEDIUM_2,
             isListFromHome: false,

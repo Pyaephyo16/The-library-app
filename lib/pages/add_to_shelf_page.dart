@@ -49,13 +49,14 @@ class AddToShelfPage extends StatelessWidget {
               itemBuilder: (context,index){
                 print("shelf check ============> ${shelfs.length}");
                 return ShelfView(
+                  key: Key("AddToShelf$index"),
                   isInAddToShelf: true,
                   image: (shelfs[index].books?.length != 0) ? shelfs[index].books?.first.bookImage ?? shelfs[index].books?.first.searchResult?.volumeInfo?.imageLinks?.thumbnail ?? IMAGE_CONSTANT_ONLINE : IMAGE_CONSTANT_ONLINE,
                   index: index,
                    goToShelf: (index){
                       AddToShelfBloc bloc = Provider.of(context,listen: false);
                   bloc.saveToShelf(index, userSelectBook).then((value){
-                    Navigator.pop(context);
+                    Navigator.pop(context,true);
                     Navigator.pop(context);
                   });
                    },

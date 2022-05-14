@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/crate_shelf_page_bloc.dart';
-import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/blocs/home_tab_bloc.dart';
 import 'package:the_library_app/dummy/dummy_data.dart';
 import 'package:the_library_app/resources/colors.dart';
 import 'package:the_library_app/resources/dimens.dart';

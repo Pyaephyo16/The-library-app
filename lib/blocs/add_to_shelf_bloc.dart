@@ -10,7 +10,11 @@ BookModel bookModel = BookModelImpl();
 
 List<ShelfVO>? shelfs;
 
-  AddToShelfBloc(){
+  AddToShelfBloc({BookModel? model}){
+
+    if(model != null){
+      bookModel = model;
+    }
 
     bookModel.getAllShelfsDatabase().listen((event) {
         shelfs = event;

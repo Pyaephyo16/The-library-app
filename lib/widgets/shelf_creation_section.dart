@@ -25,12 +25,14 @@ class shelfCreateSection extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
             CreateButton(
+              key: Key("createShelfComfirmKey"),
               createBtn: (){
                 creation();
               },
             ),
            SizedBox(height: MARGIN_SMALL_1X,),
            ShelfTextView(
+             shelfNameKey: Key("createShelfKey"),
              name: shelfName,
              formKey: formKey,
              isFocus: isFocus,
@@ -45,8 +47,10 @@ class shelfCreateSection extends StatelessWidget {
 class CreateButton extends StatelessWidget {
   
     final Function createBtn;
+    final Key key;
 
     CreateButton({
+      required this.key,
       required this.createBtn,
     });
 

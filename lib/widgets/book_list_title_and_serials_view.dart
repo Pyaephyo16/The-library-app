@@ -7,6 +7,8 @@ import 'package:the_library_app/view_items/book_view.dart';
 
 class BookListTileAndSerialsView extends StatelessWidget {
 
+  final int indexO;
+  final Key key;
   final String title;
   final List<BookVO> books;
   final Function(int) onClick;
@@ -14,7 +16,9 @@ class BookListTileAndSerialsView extends StatelessWidget {
   final bool isShowPrice;
 
   BookListTileAndSerialsView({
+    required this.key,
     required this.title,
+    required this.indexO,
     required this.books,
     required this.isShowPrice,
     required this.onClick,
@@ -30,6 +34,7 @@ class BookListTileAndSerialsView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           BookListTitleView(
+            indexO: indexO,
               isListFromHome: false,
               title: title,
               padd: MARGIN_MEDIUM_2,
@@ -39,6 +44,7 @@ class BookListTileAndSerialsView extends StatelessWidget {
           ),
           HorizontalBookListView(
             books: books,
+            indexO: indexO,
             isShowPrice: isShowPrice,
             onClick: (userSelectBookIndex) => onClick(userSelectBookIndex),
           ),
@@ -53,9 +59,11 @@ class HorizontalBookListView extends StatelessWidget {
   final List<BookVO> books;
   final Function(int) onClick;
   final bool isShowPrice;
+  final int indexO;
 
   HorizontalBookListView({
     required this.books,
+    required this.indexO,
     required this.isShowPrice,
     required this.onClick,
   });
@@ -70,6 +78,7 @@ class HorizontalBookListView extends StatelessWidget {
         itemCount: books.length,
         itemBuilder: (context,index){
           return BookView(
+            key: Key("ebook$indexO$index"),
             isInShelf: false,
             isShowPrice: isShowPrice,
             name: books[index].title ?? books[index].searchResult?.volumeInfo?.title ?? "",

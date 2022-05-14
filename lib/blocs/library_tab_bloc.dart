@@ -32,11 +32,17 @@ int libTabIndex = 0;
  List<ShelfVO>? shelfs;
 
 
- LibraryTabBloc(){
+ LibraryTabBloc({BookModel? model}){
+
+   if(model != null){
+     bookModel = model;
+   }
+
           ///get List For Carousel
         bookModel.getUserTapBookDatabase().listen((event) {
           listForCarousel = event;
           listForCarousel?.sort(((a, b) => a.time!.compareTo(b.time ?? "") ));
+          
    listForCarousel?.forEach((element){
               test.add(element.categoryForOverView ?? element.listName ?? element.searchResult?.volumeInfo?.categories?.first ?? "");
           }); 
@@ -67,9 +73,9 @@ int libTabIndex = 0;
 
  }
  
-  void deleteAllShelfsDatabase(){
-    bookModel.deleteAllShelfsDatabase();
-  }
+  // void deleteAllShelfsDatabase(){
+  //   bookModel.deleteAllShelfsDatabase();
+  // }
 
    libChooseTab(int index){
       libTabIndex = index;

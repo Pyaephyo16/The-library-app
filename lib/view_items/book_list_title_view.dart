@@ -5,12 +5,14 @@ import 'package:the_library_app/resources/dimens.dart';
 class BookListTitleView extends StatelessWidget {
 
   final String title;
+  final int indexO;
   final double padd;
   final bool isListFromHome;
   final Function goToNext;
 
   BookListTitleView({
     required this.title,
+    required this.indexO,
     required this.padd,
     required this.isListFromHome,
     required this.goToNext,
@@ -25,6 +27,7 @@ class BookListTitleView extends StatelessWidget {
                      Visibility(
                        visible: isListFromHome,
                        child: IconButton(
+                         key: Key("popFromShowMore"),
                          onPressed: (){
                             Navigator.pop(context);
                          }, 
@@ -44,6 +47,7 @@ class BookListTitleView extends StatelessWidget {
                     Visibility(
                       visible: !isListFromHome,
                       child: IconButton(
+                        key: Key("showMoreKey$indexO"),
                         onPressed: (){
                             goToNext();
                         }, 

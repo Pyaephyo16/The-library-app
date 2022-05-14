@@ -31,9 +31,6 @@ class ShelfPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-    print("user select index ====================> $userSelectIndex");
-
     return ChangeNotifierProvider<ShelfBloc>.value(
       value : ShelfBloc(userSelectIndex),
       child: Scaffold(
@@ -66,7 +63,7 @@ class ShelfPage extends StatelessWidget {
                 },
                 callRename: (){
                   newName.text = shelfs[userSelectIndex].shelfName ?? "";
-                  FocusScope.of(context).requestFocus(focusNode);
+                  //FocusScope.of(context).requestFocus(focusNode);
                 },
               ),
             ),
@@ -89,6 +86,7 @@ class ShelfPage extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               children: [
                   CreateButton(
+                    key: Key("renameShelfConfirmKey"),
                     createBtn:  (){
                             if(formKey.currentState!.validate()){
               ShelfBloc bloc = Provider.of(context,listen: false);
@@ -97,6 +95,7 @@ class ShelfPage extends StatelessWidget {
                        },
                     ),
                     ShelfTextView(
+                      shelfNameKey: Key("renameShelfKeyToEnterText"),
                       name: newName,
                        formKey: formKey,
                         isFocus: true,
@@ -123,36 +122,39 @@ class ShelfPage extends StatelessWidget {
             Divider(color: BTM_SHEET_OPTION_ICON_COLOR,thickness: 1,),
             SizedBox(height: MARGIN_SMALL_1X,),
             Container(
-              child:  Selector<ShelfBloc,int>(
-                                selector: (context,bloc) => bloc.gpValue,
-                                shouldRebuild: (previous,next) => previous != next,
-                                builder: (context,gpValue,child) =>
-                                Selector<ShelfBloc,List<ChipVO>>(
-                                selector: (context,bloc) => bloc.chips ?? [],
-                                shouldRebuild: (previous,next) => previous != next,
-                                builder: (context,chips,child) =>
-                                Selector<ShelfBloc,List<String>>(
-                                selector: (context,bloc) => bloc.currentBox,
-                                shouldRebuild: (previous,next) => previous != next,
-                                builder: (context,currentBox,child) =>
-                                   Selector<ShelfBloc,int>(
-                                    selector: (context,bloc) => bloc.sortStyle,
-                                    shouldRebuild: (previous,next) => previous != next,
-                                     builder: (context,sortStyle,child) =>
-                                     Selector<ShelfBloc,List<BookVO>>(
-                                selector: (context,bloc) => bloc.booksInShelf ?? [],
-                                shouldRebuild: (previous,next) => previous != next,
-                                builder: (context,booksInShelf,child){
-                                   return (booksInShelf.length == 0) 
+              // child:  Selector<ShelfBloc,int>(
+              //                   selector: (context,bloc) => bloc.gpValue,
+              //                   shouldRebuild: (previous,next) => previous != next,
+              //                   builder: (context,gpValue,child) =>
+              //                   Selector<ShelfBloc,List<ChipVO>>(
+              //                   selector: (context,bloc) => bloc.chips ?? [],
+              //                   shouldRebuild: (previous,next) => previous != next,
+              //                   builder: (context,chips,child) =>
+              //                   Selector<ShelfBloc,List<String>>(
+              //                   selector: (context,bloc) => bloc.currentBox,
+              //                   shouldRebuild: (previous,next) => previous != next,
+              //                   builder: (context,currentBox,child) =>
+              //                      Selector<ShelfBloc,int>(
+              //                       selector: (context,bloc) => bloc.sortStyle,
+              //                       shouldRebuild: (previous,next) => previous != next,
+              //                        builder: (context,sortStyle,child) =>
+              //                        Selector<ShelfBloc,List<BookVO>>(
+              //                   selector: (context,bloc) => bloc.booksInShelf ?? [],
+              //                   shouldRebuild: (previous,next) => previous != next,
+              //                   builder: (context,booksInShelf,child){
+                        child: Consumer<ShelfBloc>(
+                          builder: (context,ShelfBloc sblc,child) {
+                                   return (sblc.booksInShelf?.length == 0) 
                                             ?
                                             Center(child: Text("Empty"),) 
                                             :
                                        YourBooksView(
-                                          currentBox: currentBox,
-                                          listForCarousel: booksInShelf,
-                                         chips: chips,
-                                       gpValue: gpValue,
-                                       sortStyle: sortStyle,
+                                         key: Key("ShelfPageKey"),
+                                          currentBox: sblc.currentBox,
+                                          listForCarousel: sblc.booksInShelf ?? [],
+                                         chips: sblc.chips ?? [],
+                                       gpValue: sblc.gpValue,
+                                       sortStyle: sblc.sortStyle,
                                         ChooseTab: (gpValue){
                                           BtmSheet(
                                             context,
@@ -161,17 +163,23 @@ class ShelfPage extends StatelessWidget {
                                             rd1Text: BTM_RD_1,
                                             rd2Text: BTM_RD_2,
                                             rd3Text: BTM_RD_3,
+                                            rd1Key: Key("shelfPageSortByRecentKey"),
+                                            rd2Key: Key("shelfPageSortByAuthorKey"),
+                                            rd3Key: Key("shelfPageSortByTitleKey"),
                                             rd1: (val){
                                               ShelfBloc _bloc = Provider.of(context,listen: false);
                                                    _bloc.chooseSort(val,userSelectIndex).then((value) => Navigator.pop(context));
+                                              print("Sort by recent passed");
                                             },
                                             rd2: (val){
                                                ShelfBloc _bloc = Provider.of(context,listen: false);
                                                       _bloc.chooseSort(val,userSelectIndex).then((value) => Navigator.pop(context));
+                                              print("Sort by author passed");
                                             },
                                             rd3: (val){
                                                ShelfBloc _bloc = Provider.of(context,listen: false);
                                                      _bloc.chooseSort(val,userSelectIndex).then((value) => Navigator.pop(context));
+                                              print("Sort by title passed");
                                             }
                                              );
                                         },
@@ -183,6 +191,9 @@ class ShelfPage extends StatelessWidget {
                                                  rd1Text: BTM_RD_SORT_1,
                                                   rd2Text: BTM_RD_SORT_2,
                                                    rd3Text: BTM_RD_SORT_3,
+                                                   rd1Key: Key("shelfPageListStyleKey"),
+                                                   rd2Key: Key("shelfPageGridMediumKey"),
+                                                   rd3Key: Key("shelfPageGridLargeKey"),
                                                     rd1: (val){
                                               ShelfBloc _bloc = Provider.of(context,listen: false);
                                                    _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
@@ -218,11 +229,12 @@ class ShelfPage extends StatelessWidget {
                                         },
                                         );
                                 }
-                                     ),
-                                  ),
-                                )
-                                ),
-              ),
+                          ),
+                            //),
+                          //),
+                       //)
+                    //),
+                   //),
             )
           ],
         ),
@@ -248,6 +260,7 @@ class ShelfPage extends StatelessWidget {
                                SizedBox(width: 6,),
                                 Expanded(
                                   child: ButtonView(
+                                    key: Key("CancelDeleteKey"),
                                        isGhostButton: true,
                                       title: CANCEL_TEXT,
                                   bgColor: Colors.transparent,
@@ -259,6 +272,7 @@ class ShelfPage extends StatelessWidget {
                                 SizedBox(width: 6,),
                              Expanded(
                                child: ButtonView(
+                                 key: Key("ConfirmDeleteKey"),
                                  isGhostButton: false,
                                   title: DELETE_TEXT,
                                    bgColor: CREATE_BUTTON_COLOR,
@@ -299,6 +313,7 @@ class ShelfPage extends StatelessWidget {
                                            mainAxisSize: MainAxisSize.min,
                                            children: [
                                              OptionButtonView(
+                                               key: Key("shelfPageOption1"),
                                                isInSheet: true,
                                                title: BOOK_OPTION_DOWNLOAD,
                                                 icon: Icon(Icons.download_outlined,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
@@ -306,6 +321,7 @@ class ShelfPage extends StatelessWidget {
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(
+                                                   key: Key("shelfPageOption2"),
                                                   isInSheet: true,
                                                title: BOOK_OPTION_DELETEFROMLIBRARY,
                                                 icon: Icon(Icons.delete_outline_rounded,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
@@ -313,6 +329,7 @@ class ShelfPage extends StatelessWidget {
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(
+                                                   key: Key("shelfPageOption3"),
                                                   isInSheet: true,
                                                title: BOOK_OPTION_MARKASFINISHED,
                                                 icon: Icon(Icons.check,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
@@ -320,6 +337,7 @@ class ShelfPage extends StatelessWidget {
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(
+                                                   key: Key("shelfPageOption4"),
                                                   isInSheet: true,
                                                title: BOOK_OPTION_ADDTOSHELF,
                                                 icon: Icon(Icons.add,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
@@ -327,6 +345,7 @@ class ShelfPage extends StatelessWidget {
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(
+                                                   key: Key("shelfPageOption5"),
                                                   isInSheet: true,
                                                title: BOOK_OPTION_ABOUTTHISBOOK,
                                                 icon: Icon(Icons.book,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
@@ -346,6 +365,9 @@ class ShelfPage extends StatelessWidget {
   required String rd1Text,
   required String rd2Text,
   required String rd3Text,
+  required Key rd1Key,
+  required Key rd2Key,
+  required Key rd3Key,
     required Function(int) rd1,
     required Function(int) rd2,
     required Function(int) rd3,
@@ -372,6 +394,10 @@ class ShelfPage extends StatelessWidget {
                        mainAxisSize: MainAxisSize.min,
                        children: [
                       ListTile(
+                        key: rd1Key,
+                        onTap: (){
+                          rd1(1);
+                        },
                            leading: Radio(
                   groupValue: gpValue,
                      value: 1,
@@ -387,6 +413,10 @@ class ShelfPage extends StatelessWidget {
              ),
             ),
                   ListTile(
+             key: rd2Key,
+             onTap: (){
+               rd2(2);
+             },
            leading: Radio(
                    groupValue: gpValue,
                        value: 2,
@@ -402,6 +432,10 @@ class ShelfPage extends StatelessWidget {
                   ),
                  ),
                  ListTile(
+                   key: rd3Key,
+                   onTap: (){
+                     rd3(3);
+                   },
                leading: Radio(
                  groupValue: gpValue,
                value: 3,
@@ -457,6 +491,7 @@ class ShelfDetailAppBarView extends StatelessWidget {
            icon: Icon(Icons.search,size: MARGIN_MEDIUM_4,color: BTM_SHEET_OPTION_ICON_COLOR,),
            ),
     PopupMenuButton(
+      key: Key("shelfPageMenuBtnKey"),
       onSelected: (int index){
           renameOrDelShelf(index);
                      if(index == 1){
@@ -470,10 +505,12 @@ class ShelfDetailAppBarView extends StatelessWidget {
       icon: FaIcon(FontAwesomeIcons.ellipsisVertical,color: BTM_SHEET_OPTION_ICON_COLOR,),iconSize: MARGIN_SIZE_FOR_ICON,
       itemBuilder: (context) =>[
         PopupMenuItem(
+          key: Key("CallRenameKey"),
           child: Text(RENAME_SHELF_TEXT),
           value: 0,
           ),
           PopupMenuItem(
+            key: Key("deleteShelfKey"),
           child: Text(DELETE_SHELF_TEXT),
           value: 1,
           ),

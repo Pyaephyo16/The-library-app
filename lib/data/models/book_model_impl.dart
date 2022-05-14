@@ -38,6 +38,23 @@ class BookModelImpl extends BookModel{
 
   BookModelImpl._internal();
 
+
+  ///For testing
+ void setDaosAndDataAgent(
+   OverViewDao overView,
+   ShowMoreDao showMore,
+   BookListForCarouselDao bookListCarousel,
+   ShelfListDao shelf,
+   BookDataAgent agent,
+ ){
+   mOverView = overView;
+   mShowMore = showMore;
+   mBookListCarousel = bookListCarousel;
+   mShelf = shelf;
+   dataAgent = agent;
+ }
+
+
   ///Network
 
   @override
@@ -63,12 +80,12 @@ class BookModelImpl extends BookModel{
   Future<List<BookVO>?> showMoreBooks(String list, String offset, String bestSellersDate, String publishedDate) {
     print("Show more data Layer =================> $API_KEY_VALUE $list $offset $bestSellersDate $publishedDate");
     return dataAgent.showMoreBooks(API_KEY_VALUE, list, offset, bestSellersDate, publishedDate).then((value){
-          List<BookVO> dataForBook = value?.first ?? [];
-          dataForBook.forEach((element) {
+          List<BookVO> dataForBook = value?.first ?? [] as List<BookVO>;
+          dataForBook.forEach((BookVO element) {
               element.numResults = value?[1];
               print("Num result check ====================> ${value?[1]}");
           });
-        List<BookVO> tempOuter = dataForBook.map((dataOuter){
+        List<BookVO> tempOuter = dataForBook.map((BookVO dataOuter){
                 dataOuter.time = "0";
             List<BookDetailsVO> tempInner = dataOuter.bookDetails?.map((dataInner){
                 dataInner.time = "0";
@@ -81,6 +98,7 @@ class BookModelImpl extends BookModel{
         mShowMore.saveAllShowMoreBooks(publishedDate,listData);
         return Future.value(tempOuter);
     }).catchError((error){
+      print("test error occur ======================================================>");
         print("Show more Data layer Error ==========> $error");
     });
   }
@@ -154,13 +172,13 @@ class BookModelImpl extends BookModel{
     .map((event) => mBookListCarousel.getUserTapBookListData());
   }
 
-  @override
-  Stream<BookVO?> getUserTapSingleBookDatabase(String name){
-    return mBookListCarousel
-    .getUserTapBookListEventStream()
-    .startWith(mBookListCarousel.getUserTapSingleBookStream(name))
-    .map((event) => mBookListCarousel.getUserTapSingleBookData(name));
-  }
+  // @override
+  // Stream<BookVO?> getUserTapSingleBookDatabase(String name){
+  //   return mBookListCarousel
+  //   .getUserTapBookListEventStream()
+  //   .startWith(mBookListCarousel.getUserTapSingleBookStream(name))
+  //   .map((event) => mBookListCarousel.getUserTapSingleBookData(name));
+  // }
 
   @override
   void deleteBooksFromCarouselDatabase() {
@@ -196,10 +214,10 @@ class BookModelImpl extends BookModel{
   // }
 
 
-  @override
-  void deleteAllShelfsDatabase() {
-    mShelf.deleteAllShelfs();
-  }
+  // @override
+  // void deleteAllShelfsDatabase() {
+  //   mShelf.deleteAllShelfs();
+  // }
 
 
 }

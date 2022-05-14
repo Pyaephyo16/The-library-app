@@ -9,12 +9,14 @@ class ShelfTextView extends StatelessWidget {
   final GlobalKey<FormState> formKey;
   final bool isFocus;
   final FocusNode focusNode;
+  final Key shelfNameKey;
 
   ShelfTextView({
     required this.name,
     required this.formKey,
     required this.isFocus,
     required this.focusNode,
+    required this.shelfNameKey,
   });
 
   @override
@@ -22,6 +24,7 @@ class ShelfTextView extends StatelessWidget {
     return Form(
       key: formKey,
       child: TextFormField(
+        key: shelfNameKey,
         controller: name,
         focusNode: focusNode,
         autofocus: isFocus,

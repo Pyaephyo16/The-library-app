@@ -37,15 +37,14 @@ class ShelfListDaoImpl extends ShelfListDao{
     getShelfBox().delete(id);
   }
 
-   @override
-  void deleteAllShelfs() {
-    getShelfBox().clear();
-  }
+  //  @override
+  // void deleteAllShelfs() {
+  //   getShelfBox().clear();
+  // }
 
   @override
   List<BookVO> getSelectedShelf(List<String> currentBox,int shelfIndex){
     List<BookVO> temp = [];
-
     List<ShelfVO> dataTest = getAllShelfs();
     currentBox.forEach((outer) {
      dataTest[shelfIndex].books?.forEach((element) {

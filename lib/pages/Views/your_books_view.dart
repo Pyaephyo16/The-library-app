@@ -2,7 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/blocs/home_tab_bloc.dart';
 import 'package:the_library_app/data/vos/chip_vo.dart';
 import 'package:the_library_app/data/vos/overview/book_vo.dart';
 import 'package:the_library_app/dummy/dummy_data.dart';
@@ -18,6 +18,7 @@ import 'package:the_library_app/view_items/option_button_view.dart';
 
 class YourBooksView extends StatelessWidget {
 
+  final Key key;
   final List<ChipVO> chips;
   final List<String> currentBox;
   final List<BookVO> listForCarousel;
@@ -32,6 +33,7 @@ class YourBooksView extends StatelessWidget {
   final Function(int,BookVO) sheetFun;
 
   YourBooksView({
+    required this.key,
     required this.chips,
     required this.currentBox,
     required this.gpValue,
@@ -48,14 +50,7 @@ class YourBooksView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
-// WidgetsBinding.instance?.addPostFrameCallback((_){
-//       HomePageBloc bloc = Provider.of(context,listen: false);
-//      bloc.yourbookOrLib(0);
-//     });
-
-    return 
-        ListView(
+    return ListView(
           shrinkWrap: true,
           physics: NeverScrollableScrollPhysics(),
         children: [
@@ -91,12 +86,11 @@ class YourBooksView extends StatelessWidget {
 
 class SortBySection extends StatelessWidget {
   const SortBySection({
-    Key? key,
     required this.gpValue,
     required this.ChooseTab,
     required this.sortStyle,
     required this.onChooseStyle,
-  }) : super(key: key);
+  });
 
   final int gpValue;
   final Function(int p1) ChooseTab;
@@ -110,6 +104,7 @@ class SortBySection extends StatelessWidget {
       child: Row(
         children: [
           OptionButtonView(
+            key: Key("YourBooksSortByKey"),
             isInSheet: false,
             title: (gpValue == 1) ? SORT_BY_RECENT : (gpValue == 2) ? SORT_BY_AUTHOR : SORT_BY_TITLE,
             icon: Icon(Icons.filter_list,size: MARGIN_MEDIUM_3,color: DETAIL_TEXT_COLOR,),
@@ -119,10 +114,13 @@ class SortBySection extends StatelessWidget {
           ),
           Spacer(),
           OptionButtonView(
+            key: Key("YourBoksListOrGrid"),
             isInSheet: false,
             title: (sortStyle == 1) ? LIST_STYLE : (sortStyle == 2) ? GRID_MEDIUM : GRID_LARGE,
              icon: (sortStyle == 1) ? Icon(Icons.list_alt,size: MARGIN_MEDIUM_3,color: DETAIL_TEXT_COLOR,) : Icon(Icons.view_list_outlined,size: 24,color: DETAIL_TEXT_COLOR,),
-               onClick: ()=> onChooseStyle(sortStyle),
+               onClick: (){
+                  onChooseStyle(sortStyle);
+               },
                ),
         ],
       ),
@@ -132,12 +130,11 @@ class SortBySection extends StatelessWidget {
 
 class ChipSection extends StatelessWidget {
   const ChipSection({
-    Key? key,
     required this.cancelGenre,
     required this.chips,
     required this.currentBox,
     required this.TapGenre,
-  }) : super(key: key);
+  });
 
   final Function cancelGenre;
   final List<ChipVO> chips;
@@ -153,10 +150,11 @@ class ChipSection extends StatelessWidget {
       child: ListView(
         scrollDirection: Axis.horizontal,
         children: [
-        (currentBox.length != 0) ?  CancelGenreButton(cancelGenre: cancelGenre) : Container(),
+        (currentBox.length != 0) ?  CancelGenreButton(key: Key("YourBooksCancelAllChips"),cancelGenre: cancelGenre) : Container(),
           ...chips.mapIndexed((index,type){
             return 
             ChipView(
+              key: Key("YourBooksChip$index"),
               index: index,
               type: type,
               TapGenre: (index) => TapGenre(index),
@@ -170,10 +168,11 @@ class ChipSection extends StatelessWidget {
 
 class CancelGenreButton extends StatelessWidget {
   const CancelGenreButton({
-    Key? key,
+    required this.key,
     required this.cancelGenre,
-  }) : super(key: key);
+  });
 
+  final Key key;
   final Function cancelGenre;
 
   @override
@@ -198,11 +197,17 @@ class CancelGenreButton extends StatelessWidget {
 
 class ChipView extends StatelessWidget {
 
+  final Key key;
   final int index;
   final ChipVO type;
   final Function(int) TapGenre;
 
-  ChipView({required this.index,required this.type,required this.TapGenre});
+  ChipView({
+    required this.key,
+    required this.index,
+    required this.type,
+    required this.TapGenre,
+    });
 
   @override
   Widget build(BuildContext context) {
@@ -231,13 +236,12 @@ class ChipView extends StatelessWidget {
 
 class ListAndGridShowSection extends StatelessWidget {
   const ListAndGridShowSection({
-    Key? key,
     required this.sortStyle,
     required this.listForCarousel,
     required this.tabBookInfoBtn,
     required this.onClick,
     required this.sheetFun,
-  }) : super(key: key);
+  });
 
   final int sortStyle;
   final List<BookVO> listForCarousel;
@@ -278,6 +282,7 @@ class ListAndGridShowSection extends StatelessWidget {
            print("sort No =============> $sortStyle");
            return BookInLibGridView(
              styleNo: sortStyle,
+             key: Key("bookInLibGrid$index"),
              books: listForCarousel[index],
              sheetFun: (book){
                sheetFun(index,book);
@@ -337,6 +342,7 @@ class BookInLibListView extends StatelessWidget {
               isInShelvesIcon: true,
             ),
             EllipisIconView(
+              key: Key("YourBooksListInLibEllipisKey$index"),
               color: BTM_SHEET_OPTION_ICON_COLOR,
               tabBookInfoBtn: () => tabBookInfoBtn(index,books),
             ),
@@ -354,10 +360,12 @@ class BookInLibGridView extends StatelessWidget {
   final int styleNo;
   final BookVO books;
   final Function onClick;
+  final Key key;
   final Function(BookVO) sheetFun;
 
   BookInLibGridView({
     required this.styleNo,
+    required this.key,
     required this.books,
     required this.onClick,
     required this.sheetFun,
@@ -369,6 +377,7 @@ class BookInLibGridView extends StatelessWidget {
       padding: EdgeInsets.symmetric(horizontal: MARGIN_SMALL),
       child: Container(
         child: BookView(
+          key: key,
           isInShelf: true,
           sheetFun: (){
             sheetFun(books);

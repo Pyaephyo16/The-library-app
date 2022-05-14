@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/book_detail_bloc.dart';
-import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/blocs/home_tab_bloc.dart';
 import 'package:the_library_app/blocs/show_more_bloc.dart';
 import 'package:the_library_app/blocs/library_tab_bloc.dart';
 import 'package:the_library_app/data/vos/overview/book_list_vo.dart';
@@ -33,8 +33,8 @@ class HomeTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return
-     ChangeNotifierProvider<HomePageBloc>.value(
-      value: HomePageBloc(),
+     ChangeNotifierProvider<HomeTabBloc>.value(
+      value: HomeTabBloc(),
       // ChangeNotifierProvider<HomePageBloc>(
       //   create: (context) => HomePageBloc(),
       child: Container(
@@ -42,7 +42,7 @@ class HomeTab extends StatelessWidget {
           child: ListView(
             children: [
               SizedBox(height: MARGIN_OVER),
-             Selector<HomePageBloc,List<BookVO>>(
+             Selector<HomeTabBloc,List<BookVO>>(
                selector: (context,bloc) => bloc.listForCarousel ?? [],
                shouldRebuild: (previous,next) => previous != next,
                builder: (context,listForCarousel,child) =>
@@ -53,6 +53,7 @@ class HomeTab extends StatelessWidget {
                )
                :
                 CarouselBookView(
+                  key: Key("CarouselKey"),
                  bookListForCarousel: listForCarousel.reversed.toList(),
                  menuFun: (book){
                    BookOptionBtmSheet(context,book);
@@ -70,25 +71,30 @@ class HomeTab extends StatelessWidget {
              SizedBox(height: MARGIN_FOR_CAROUSEL,),
              DefaultTabController(
                length: 2,
-                child: Selector<HomePageBloc,int>(
+                child: Selector<HomeTabBloc,int>(
                   selector: (context,bloc) => bloc.tabIndex,
                   shouldRebuild: (previous,next) => previous != next,
                   builder: (context,tabIndex,child) =>
                    TabBar(
+                     key: Key("HometabTabBar"),
                     indicatorSize: TabBarIndicatorSize.label,
                     labelColor: CREATE_BUTTON_COLOR,
                     unselectedLabelColor: BOOK_EXTRA_DATA_CONTENT_COLOR,
                     onTap: (index){
-                      HomePageBloc _bloc = Provider.of(context,listen: false);
+                      HomeTabBloc _bloc = Provider.of(context,listen: false);
                       _bloc.userChooseBookTypeIndex(index);
                     },
                     tabs: [
-                      Tab(child: Text(TAB_EBOOK,
+                      Tab(
+                        key: Key("EbookKey"),
+                        child: Text(TAB_EBOOK,
                       style: TextStyle(
                         fontSize: TEXT_SMALL_1X,
                       ),
                       ),),
-                      Tab(child: Text(TAB_AUDIOBOOK,
+                      Tab(
+                        key: Key("AudiobookKey"),
+                        child: Text(TAB_AUDIOBOOK,
                       style: TextStyle(
                         fontSize: TEXT_SMALL_1X,
                       ),
@@ -97,15 +103,15 @@ class HomeTab extends StatelessWidget {
                 ),
                 ),
                 SizedBox(height: MARGIN_MEDIUM_2,),
-                Selector<HomePageBloc,int>(
+                Selector<HomeTabBloc,int>(
                   selector: (context,bloc) => bloc.tabIndex,
                   shouldRebuild: (pre,next) => pre != next,
                   builder: (context,tabIndex,child) =>
-                   Selector<HomePageBloc,ResultVO>(
+                   Selector<HomeTabBloc,ResultVO>(
                      selector: (context,bloc) => bloc.results ?? ResultVO.empty(),
                      shouldRebuild: (previous,next) => previous != next,
                      builder: (context,result,child) =>
-                      Selector<HomePageBloc,List<BookVO>>(
+                      Selector<HomeTabBloc,List<BookVO>>(
                selector: (context,bloc) => bloc.listForCarousel ?? [],
                shouldRebuild: (previous,next) => previous != next,
                builder: (context,listForCarousel,child) =>
@@ -115,20 +121,12 @@ class HomeTab extends StatelessWidget {
                          EbooksView(
                            bookList: result.lists ?? [],
                            onClick: (book){
-                            //  BookDetailBloc _bloc = Provider.of(context,listen: false);
-                            //  _bloc.tapForDetail(book,listForCarousel).then((value){
-                            //   navigateToNextScreen(context,BookDetailPage());
-                            //  });
-                            HomePageBloc bloc = Provider.of(context,listen: false);
+                            HomeTabBloc bloc = Provider.of(context,listen: false);
                             bloc.saveBookToCarousel(book).then((value) => 
                             navigateToNextScreen(context, BookDetailPage( book: book,)));
                             
                            },
                             goToNext: (index){
-                              // ShowMoreBloc _bloc = Provider.of(context,listen: false);
-                              // _bloc.clickForMoreView(index,result).then((value){
-                              //    navigateToNextScreen(context,BookListInGrid());
-                              // });
                               navigateToNextScreen(context,BookListInGrid(
                                 index: index,
                                 result: result,
@@ -163,9 +161,9 @@ class HomeTab extends StatelessWidget {
          MaterialPageRoute(builder: (BuildContext context) => page));
   }
 
-    Future<dynamic> BookOptionBtmSheet(BuildContext context,BookVO book) {
+    Future<dynamic> BookOptionBtmSheet(BuildContext BtmOptionSheetcontext,BookVO book) {
     return showModalBottomSheet(
-                      context: context,
+                      context: BtmOptionSheetcontext,
                           builder: (_){
                                 return Column(
                                      crossAxisAlignment: CrossAxisAlignment.start,
@@ -187,6 +185,7 @@ class HomeTab extends StatelessWidget {
                                            mainAxisSize: MainAxisSize.min,
                                            children: [
                                              OptionButtonView(
+                                               key: Key("homeTabOption1"),
                                                title: BOOK_OPTION_DOWNLOAD,
                                                 icon: Icon(Icons.download_outlined,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
                                                 onClick: () => print("todo"),
@@ -194,6 +193,7 @@ class HomeTab extends StatelessWidget {
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(
+                                                  key: Key("homeTabOption2"),
                                                   isInSheet: true,
                                                title: BOOK_OPTION_DELETEFROMLIBRARY,
                                                 icon: Icon(Icons.delete_outline_rounded,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
@@ -201,6 +201,7 @@ class HomeTab extends StatelessWidget {
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(
+                                                  key: Key("homeTabOption3"),
                                                   isInSheet: true,
                                                title: BOOK_OPTION_MARKASFINISHED,
                                                 icon: Icon(Icons.check,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
@@ -208,13 +209,15 @@ class HomeTab extends StatelessWidget {
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(
+                                                   key: Key("homeTabOption4"),
                                                   isInSheet: true,
                                                title: BOOK_OPTION_ADDTOSHELF,
                                                 icon: Icon(Icons.add,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
-                                                onClick: () => navigateToNextScreen(context, AddToShelfPage(userSelectBook: book)),
+                                                onClick: () => navigateToNextScreen(BtmOptionSheetcontext, AddToShelfPage(userSelectBook: book)),
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(
+                                                   key: Key("homeTabOption5"),
                                                   isInSheet: true,
                                                title: BOOK_OPTION_ABOUTTHISBOOK,
                                                 icon: Icon(Icons.book,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
@@ -254,8 +257,10 @@ class CarouselBookView extends StatelessWidget {
   
   final List<BookVO> bookListForCarousel;
   final Function(BookVO) menuFun;
+  final Key key;
 
   CarouselBookView({
+    required this.key,
     required this.bookListForCarousel,
     required this.menuFun,
     });

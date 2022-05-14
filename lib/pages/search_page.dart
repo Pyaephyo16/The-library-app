@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/book_detail_bloc.dart';
-import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/blocs/home_tab_bloc.dart';
 import 'package:the_library_app/blocs/search_page_bloc.dart';
 import 'package:the_library_app/blocs/library_tab_bloc.dart';
 import 'package:the_library_app/data/vos/overview/book_vo.dart';
@@ -37,6 +37,7 @@ class SearchPage extends StatelessWidget {
                 child: Builder(
                   builder: (context)=>
                    SearchFieldSection(
+                     key: Key("SearchPageSearchBar"),
                     searchText: searchText,
                     isSearchPage: true,
                     prefixTouch: (){
@@ -108,7 +109,9 @@ class SearchPage extends StatelessWidget {
                               itemCount: data.length,
                               itemBuilder: (context,index){
                              return BookListTileAndSerialsView(
+                               key: Key("SearchPageBookListTitleAndSerial"),
                                isShowPrice: false,
+                               indexO: index,
                                title: data.keys.elementAt(index).toString(),
                                books: data[data.keys.elementAt(index)] ?? [],
                                goToNext: (){},

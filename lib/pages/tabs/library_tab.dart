@@ -4,7 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/book_detail_bloc.dart';
 import 'package:the_library_app/blocs/crate_shelf_page_bloc.dart';
-import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/blocs/home_tab_bloc.dart';
 import 'package:the_library_app/blocs/library_tab_bloc.dart';
 import 'package:the_library_app/data/vos/chip_vo.dart';
 import 'package:the_library_app/data/vos/overview/book_list_vo.dart';
@@ -33,6 +33,12 @@ import 'package:the_library_app/widgets/book_view_for_carousel.dart';
 
 class LibraryTab extends StatelessWidget {
 
+  final GlobalKey<ScaffoldState> scaffoldKey;
+
+  LibraryTab({
+    required this.scaffoldKey,
+    });
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider<LibraryTabBloc>.value(
@@ -51,17 +57,22 @@ class LibraryTab extends StatelessWidget {
                             selector: (context,bloc) => bloc.libTabIndex,
                             shouldRebuild: (previous,next) => previous != next,
                             builder: (context,libTabIndex,child) =>
-                       TabBar(
+                           TabBar(
+                             key: Key("LibraryTabTabBar"),
                               indicatorSize: TabBarIndicatorSize.label,
                               labelColor: CREATE_BUTTON_COLOR,
                               unselectedLabelColor: BOOK_EXTRA_DATA_CONTENT_COLOR,
                             tabs: [
-                              Tab(child: Text(YOUR_BOOKS,
+                              Tab(
+                                key: Key("YourBooksTabKey"),
+                                child: Text(YOUR_BOOKS,
                               style: TextStyle(
                             fontSize: TEXT_SMALL_1X,
                           ),
                               ),),
-                              Tab(child: Text(SHELVES,
+                              Tab(
+                                key: Key("ShelvesTabKey"),
+                                child: Text(SHELVES,
                               style: TextStyle(
                             fontSize: TEXT_SMALL_1X,
                           ),
@@ -96,36 +107,39 @@ class LibraryTab extends StatelessWidget {
                             builder: (context,libTabIndex,child) {
                              return Container(
                             child: (libTabIndex == 0) ?
-                                  Selector<LibraryTabBloc,int>(
-                                    selector: (context,bloc) => bloc.gpValue,
-                                    shouldRebuild: (previous,next) => previous != next,
-                                    builder: (context,gpValue,child) =>
-                                    Selector<LibraryTabBloc,List<ChipVO>>(
-                                    selector: (context,bloc) => bloc.chips ?? [],
-                                    shouldRebuild: (previous,next) => previous != next,
-                                    builder: (context,chips,child) =>
-                                       Selector<LibraryTabBloc,List<String>>(
-                                    selector: (context,bloc) => bloc.currentBox,
-                                    shouldRebuild: (previous,next) => previous != next,
-                                    builder: (context,currentBox,child) =>
-                                      Selector<LibraryTabBloc,int>(
-                                            selector: (context,bloc) => bloc.sortStyle,
-                                             shouldRebuild: (previous,next) => previous != next,
-                                           builder: (context,sortStyle,child) =>
-                               Selector<LibraryTabBloc,List<BookVO>>(
-                                          selector: (context,bloc) => bloc.listForCarousel ?? [],
-                                        shouldRebuild: (previous,next) => previous != next,
-                                      builder: (context,listForCarousel,child) =>
-                                        (listForCarousel.isEmpty || listForCarousel == null) 
+                              //     Selector<LibraryTabBloc,int>(
+                              //       selector: (context,bloc) => bloc.gpValue,
+                              //       shouldRebuild: (previous,next) => previous != next,
+                              //       builder: (context,gpValue,child) =>
+                              //       Selector<LibraryTabBloc,List<ChipVO>>(
+                              //       selector: (context,bloc) => bloc.chips ?? [],
+                              //       shouldRebuild: (previous,next) => previous != next,
+                              //       builder: (context,chips,child) =>
+                              //          Selector<LibraryTabBloc,List<String>>(
+                              //       selector: (context,bloc) => bloc.currentBox,
+                              //       shouldRebuild: (previous,next) => previous != next,
+                              //       builder: (context,currentBox,child) =>
+                              //         Selector<LibraryTabBloc,int>(
+                              //               selector: (context,bloc) => bloc.sortStyle,
+                              //                shouldRebuild: (previous,next) => previous != next,
+                              //              builder: (context,sortStyle,child) =>
+                              //  Selector<LibraryTabBloc,List<BookVO>>(
+                              //             selector: (context,bloc) => bloc.listForCarousel ?? [],
+                              //           shouldRebuild: (previous,next) => previous != next,
+                              //         builder: (context,listForCarousel,child) =>
+                              Consumer<LibraryTabBloc>(
+                                builder: (context,LibraryTabBloc lib,child) =>
+                                        (lib.listForCarousel?.isEmpty ?? false || lib.listForCarousel == null) 
                                         ?
                                         Center(child: Text("Empty"),) 
                                         :
                                            YourBooksView(
-                                               chips: chips,
-                                               currentBox: currentBox,
-                                               gpValue: gpValue,
-                                               listForCarousel: listForCarousel,
-                                               sortStyle: sortStyle,
+                                              key: Key("YourBooksKey"),
+                                               chips: lib.chips ?? [],
+                                               currentBox: lib.currentBox,
+                                               gpValue: lib.gpValue,
+                                               listForCarousel: lib.listForCarousel ?? [],
+                                               sortStyle: lib.sortStyle,
                                               ChooseTab: (gpValue){
                                                 BtmSheet(
                                                   context,
@@ -134,6 +148,9 @@ class LibraryTab extends StatelessWidget {
                                                   rd1Text: BTM_RD_1,
                                                   rd2Text: BTM_RD_2,
                                                   rd3Text: BTM_RD_3,
+                                                  key1: Key("YourBooksSortByRecent"),
+                                                  key2: Key("YourBooksSortByAuthor"),
+                                                  key3: Key("YourBooksSortByTitle"),
                                                   rd1: (val){
                                                     LibraryTabBloc _bloc = Provider.of(context,listen: false);
                                                          _bloc.chooseSort(val).then((value) => Navigator.pop(context));
@@ -156,6 +173,9 @@ class LibraryTab extends StatelessWidget {
                                                        rd1Text: BTM_RD_SORT_1,
                                                         rd2Text: BTM_RD_SORT_2,
                                                          rd3Text: BTM_RD_SORT_3,
+                                                         key1: Key("BTMList"),
+                                                         key2: Key("BTMGridMedium"),
+                                                         key3: Key("BTMGridLarge"),
                                                           rd1: (val){
                                                     LibraryTabBloc _bloc = Provider.of(context,listen: false);
                                                          _bloc.listOrGridSort(val).then((value) => Navigator.pop(context));
@@ -185,20 +205,17 @@ class LibraryTab extends StatelessWidget {
                                                 BookOptionBtmSheet(context,index, book);
                                               },
                                               onClick: (book){
-                                                // BookDetailBloc bloc = Provider.of(context,listen: false);
-                                                // bloc.tapFromYourBookViewToDetail(book).then((value){
-                                                //   navigateToNextScreen(context, BookDetailPage());
-                                                // });
                                                 navigateToNextScreen(context, BookDetailPage(
                                                   book: book,
                                                 ));
                                               },
                                               ),
-                                            ),
-                                         ),
-                                      ),
-                                    )
-                                    )
+                                         )
+                                            //),
+                                        // ),
+                                      //),
+                                   // )
+                                    //)
                                 :
                                Selector<LibraryTabBloc,List<ShelfVO>>(
                                   selector: (context,bloc) => bloc.shelfs ?? [],
@@ -281,6 +298,7 @@ class LibraryTab extends StatelessWidget {
                                            mainAxisSize: MainAxisSize.min,
                                            children: [
                                              OptionButtonView(
+                                               key: Key("libTabOption1"),
                                                isInSheet: true,
                                                title: BOOK_OPTION_DOWNLOAD,
                                                 icon: Icon(Icons.download_outlined,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
@@ -288,6 +306,7 @@ class LibraryTab extends StatelessWidget {
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(
+                                                  key: Key("libTabOption2"),
                                                   isInSheet: true,
                                                title: BOOK_OPTION_DELETEFROMLIBRARY,
                                                 icon: Icon(Icons.delete_outline_rounded,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
@@ -295,6 +314,7 @@ class LibraryTab extends StatelessWidget {
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(
+                                                   key: Key("libTabOption3"),
                                                   isInSheet: true,
                                                title: BOOK_OPTION_MARKASFINISHED,
                                                 icon: Icon(Icons.check,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
@@ -302,13 +322,19 @@ class LibraryTab extends StatelessWidget {
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(
+                                                   key: Key("libTabOption4"),
                                                   isInSheet: true,
                                                title: BOOK_OPTION_ADDTOSHELF,
                                                 icon: Icon(Icons.add,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
-                                                onClick: () =>  navigateToNextScreen(context, AddToShelfPage(userSelectBook: book)),
+                                                onClick: () =>  navigateToNextScreen(context, AddToShelfPage(userSelectBook: book)).then((value){
+                                                  if(value == true){
+                                                    SnackBarNotiView(context, "Complete");
+                                                  }
+                                                }),
                                                 ),
                                                 SizedBox(height: MARGIN_MEDIUM_2,),
                                                 OptionButtonView(
+                                                   key: Key("libTabOption5"),
                                                   isInSheet: true,
                                                title: BOOK_OPTION_ABOUTTHISBOOK,
                                                 icon: Icon(Icons.book,size: BTM_SHEET_ICON_SIZE,color: BTM_SHEET_OPTION_ICON_COLOR,), 
@@ -321,9 +347,24 @@ class LibraryTab extends StatelessWidget {
                                    );
                                        }
                                        );
-  }
+                                 }
 
-  
+  ScaffoldFeatureController<SnackBar, SnackBarClosedReason> SnackBarNotiView(BuildContext context,String title) {
+    return Scaffold.of(context).showSnackBar(
+              SnackBar(
+                key: Key("CompleteSnackBarKey"),
+                duration: Duration(seconds: 3),
+               content: Text(title),
+               backgroundColor: Colors.black,
+               shape: RoundedRectangleBorder(
+                 borderRadius: BorderRadius.only(
+                   topLeft: Radius.circular(12),
+                   topRight: Radius.circular(12),
+                 )
+               ),
+              ),
+          );
+  }
 
   Future<dynamic> BtmSheet(BuildContext context, int gpValue,
   {required String title,
@@ -333,6 +374,9 @@ class LibraryTab extends StatelessWidget {
     required Function(int) rd1,
     required Function(int) rd2,
     required Function(int) rd3,
+    required Key key1,
+    required Key key2,
+    required Key key3,
   }) {
     return showModalBottomSheet(
            context: context,
@@ -356,7 +400,8 @@ class LibraryTab extends StatelessWidget {
                        mainAxisSize: MainAxisSize.min,
                        children: [
                       ListTile(
-                           leading: Radio(
+                   leading: Radio(
+                     key: key1,
                   groupValue: gpValue,
                      value: 1,
                     onChanged: (int? val){
@@ -372,6 +417,7 @@ class LibraryTab extends StatelessWidget {
             ),
                   ListTile(
            leading: Radio(
+                  key: key2,
                    groupValue: gpValue,
                        value: 2,
         onChanged: (int? val){
@@ -387,6 +433,7 @@ class LibraryTab extends StatelessWidget {
                  ),
                  ListTile(
                leading: Radio(
+                 key: key3,
                  groupValue: gpValue,
                value: 3,
              onChanged: (int? val){
@@ -406,6 +453,30 @@ class LibraryTab extends StatelessWidget {
       );
      }
      );
+  }
+}
+
+class CompleteSnackView extends StatelessWidget {
+  const CompleteSnackView({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 60,
+      height: 30,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10),
+        color: Colors.black,
+      ),
+      child: Center(child: Text("Complete",
+      style: TextStyle(
+        color: Colors.white,
+        fontWeight: FontWeight.w500,
+      ),
+      )),
+    );
   }
 }
 

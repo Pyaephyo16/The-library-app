@@ -5,10 +5,12 @@ import 'package:the_library_app/resources/dimens.dart';
 
 class EllipisIconView extends StatelessWidget {
  
+  final Key key;
   final Color color;
   final Function tabBookInfoBtn;
 
   EllipisIconView({
+    required this.key,
     required this.color,
     required this.tabBookInfoBtn,
     });

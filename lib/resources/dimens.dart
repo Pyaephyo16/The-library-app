@@ -1,5 +1,6 @@
 const double MARGIN_PRE_SMALL = 6.0;
 const double MARGIN_SMALL = 8.0;
+const double MARGIN_FOR_TEXT_FIELD = 9.6;
 const double MARGIN_SMALL_1 = 10.0;
 const double MARGIN_SMALL_1X = 12.0;
 const double MARGIN_MEDIUM = 14.0;

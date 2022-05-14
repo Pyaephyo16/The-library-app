@@ -4,6 +4,7 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:the_library_app/blocs/crate_shelf_page_bloc.dart';
 import 'package:the_library_app/blocs/home_page_bloc.dart';
+import 'package:the_library_app/blocs/home_tab_bloc.dart';
 import 'package:the_library_app/data/vos/overview/book_vo.dart';
 import 'package:the_library_app/pages/Views/shelves_view.dart';
 import 'package:the_library_app/pages/create_shelf_page.dart';
@@ -16,10 +17,13 @@ import 'package:the_library_app/resources/dimens.dart';
 import 'package:the_library_app/view_items/search_field_section.dart';
 
 class HomePage extends StatelessWidget {
-  List<Widget> pageList = [
-    HomeTab(),
-    LibraryTab(),
-  ];
+
+  GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+
+  // List<Widget> pageList = [
+  //   HomeTab(),
+  //   LibraryTab(scaffoldKey: ,),
+  // ];
 
   final TextEditingController search = TextEditingController();
 
@@ -30,31 +34,36 @@ class HomePage extends StatelessWidget {
       // ChangeNotifierProvider<HomePageBloc>(
       //     create: (context) => HomePageBloc(),
       child: Scaffold(
+        key: scaffoldKey,
         appBar: AppBar(
           backgroundColor: Colors.white,
           elevation: 0,
           centerTitle: true,
           toolbarHeight: 80,
-          title: Selector<HomePageBloc, List<BookVO>>(
-            selector: (context, bloc) => bloc.listForCarousel ?? [],
-            shouldRebuild: (previous, next) => previous != next,
-            builder: (context, listForCarousel, child) => Padding(
-              padding: const EdgeInsets.only(top: 9.6),
-              child: GestureDetector(
-                onTap: () {
-                  navigateToNextScreen(context,SearchPage());
-                },
-                child: SearchFieldSection(
-                  searchText: search,
-                  isSearchPage: false,
-                  prefixTouch: () {},
-                  icon: Icon(Icons.search, size: MARGIN_MEDIUM_3X),
-                  typing: (str) {},
-                  submittedFun: (str) {},
+          title: Selector<HomePageBloc, int>(
+                selector: (context, bloc) => bloc.currentIndex,
+                shouldRebuild: (previous, next) => previous != next,
+                builder: (context, currentIndex, child){ 
+                  print("search field section do timess ============================================");
+              return Padding(
+                padding: const EdgeInsets.only(top: MARGIN_FOR_TEXT_FIELD),
+                child: GestureDetector(
+                  onTap: () {
+                    navigateToNextScreen(context,SearchPage());
+                  },
+                  child: SearchFieldSection(
+                    key: Key("HomePageSearchBar"),
+                    searchText: search,
+                    isSearchPage: false,
+                    prefixTouch: () {},
+                    icon: Icon(Icons.search, size: MARGIN_MEDIUM_3X),
+                    typing: (str) {},
+                    submittedFun: (str) {},
+                  ),
                 ),
-              ),
+                      );
+             }
             ),
-          ),
         ),
         body: Stack(
           children: [
@@ -63,7 +72,8 @@ class HomePage extends StatelessWidget {
                 selector: (context, bloc) => bloc.currentIndex,
                 shouldRebuild: (previous, next) => previous != next,
                 builder: (context, currentIndex, child) =>
-                    pageList[currentIndex],
+                    //pageList[currentIndex],
+                    (currentIndex == 0) ? HomeTab() : LibraryTab(scaffoldKey: scaffoldKey)
               ),
             ),
           ],
@@ -72,11 +82,13 @@ class HomePage extends StatelessWidget {
           selector: (context, bloc) => bloc.currentIndex,
           shouldRebuild: (previous, next) => previous != next,
           builder: (context, currentIndex, child) => BottomNavigationBar(
+            key: Key("HomePageBottomNavigationBar"),
             selectedItemColor: CREATE_BUTTON_COLOR,
             items: [
               BottomNavigationBarItem(
                 icon: Icon(
                   Icons.home,
+                  key: Key("HomeTabIcon"),
                   size: MARGIN_MEDIUM_4,
                 ),
                 label: NAVIGATION_BAR_HOME_TEXT,
@@ -84,6 +96,7 @@ class HomePage extends StatelessWidget {
               BottomNavigationBarItem(
                 icon: Icon(
                   Icons.library_add,
+                  key: Key("LibTabIcon"),
                   size: MARGIN_MEDIUM_4,
                 ),
                 label: NAVIGATION_BAR_LIBRARY_TEXT,

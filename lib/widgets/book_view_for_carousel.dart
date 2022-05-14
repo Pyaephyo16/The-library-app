@@ -55,6 +55,7 @@ class BookViewForCarousel extends StatelessWidget {
         Align(
           alignment: Alignment.topRight,
           child: EllipisIconView(
+            key: Key("CarouselListEllipisKey"),
             color: Colors.white,
             tabBookInfoBtn: (){
               menuFun();

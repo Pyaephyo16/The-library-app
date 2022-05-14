@@ -26,7 +26,11 @@ List<ShelfVO>? shelfs;
 List<BookVO>? booksInShelf;
  List<ChipVO>? chips;
 
-  ShelfBloc(int userSelectIndex){
+  ShelfBloc(int userSelectIndex,{BookModel? model}){
+
+    if(model != null){
+      bookModel = model;
+    }
       
       shelfs = bookModel.getAllShelfDb();
       booksInShelf = shelfs?[userSelectIndex].books;
@@ -69,9 +73,7 @@ optionsForShelf(int? index){
   }
 
    Future<String> deleteShelf(int userSelectIndex){
-
       bookModel.deleteSingleShelfDatabase(shelfs?[userSelectIndex].id ?? "");
-
       notifyListeners();
        return Future.value("");
   }
@@ -134,9 +136,6 @@ optionsForShelf(int? index){
      if(currentBox.isEmpty || currentBox.length == 0){
         shelfs = bookModel.getAllShelfDb();
         booksInShelf = shelfs?[shelfIndex].books;
-        // bookModel.getAllShelfsDatabase().listen((event) {
-        //   shelfs = event;
-        // });
         print("Shelf length all cancel ===============> ${booksInShelf?.length}");
       }
 

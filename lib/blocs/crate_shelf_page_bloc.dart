@@ -10,6 +10,12 @@ class CreateShelfPageBloc extends ChangeNotifier{
 
   BookModel bookModel = BookModelImpl();
 
+  CreateShelfPageBloc({BookModel? model}){
+    if(model != null){
+      bookModel = model;
+    }
+  }
+
 
 String dateForId = DateTime.now().toString();
 
